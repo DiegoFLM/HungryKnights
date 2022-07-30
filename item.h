@@ -4,23 +4,32 @@ Author: Diego Fabián Ledesma Motta
 email: diego.ledesma@correounivalle.edu.co
 */
 
-
+#include <iostream>
 
 #ifndef ITEM_HH
 #define ITEM_HH
 
 
+enum line {
+    a, b, c, d, e, f, g, h
+};
+
+
 class Item {
     private:
-        int position[2];
+        line position[2];
         bool onBoard;
 
     protected:
-        void setRow(int r);
-        void setCol(int c);
+        //horse
+        void setRow(line r);
+        void setCol(line c);
+
+        //food
+        void takeOut();
 
     public:
-        Item(int row, int col);
+        Item(line row, line col);
 
         int getRow();
         int getCol();

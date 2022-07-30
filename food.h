@@ -12,7 +12,7 @@ email: diego.ledesma@correounivalle.edu.co
 #define FOOD_HH
 
 
-enum FoodType {
+enum foodType {
     grass = 1,
     flower = 3,
     apple = 5
@@ -21,12 +21,13 @@ enum FoodType {
 class Food : public Item{
    
     private:
-    FoodType type;
+    foodType type;
 
     public:
-    Food(int row, int col, FoodType _type);
+    Food(line row, line col, foodType _type);
 
-    FoodType getType();
+    foodType getType();
+    void eaten();
 };
 
 #else

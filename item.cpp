@@ -1,12 +1,33 @@
 #include "item.h"
 
 //public
-Item::Item(int row, int col){
-    int position[2];
+Item::Item(line row, line col){
     position[0] = row;
     position[1] = col;
     onBoard = true;
 }
+
+
+//protected
+
+//horse:
+void Item::setRow(line row){
+    position[0] = row;
+}
+
+void Item::setCol(line col){
+    position[0] = col;
+}
+
+
+//food:
+void Item::takeOut(){
+    onBoard = false;
+}
+
+
+
+//public
 
 int Item::getRow(){
     return position[0];
@@ -20,12 +41,4 @@ bool Item::isOnBoard(){
     return onBoard;
 }
 
-//protected
 
-void Item::setRow(int row){
-    position[0] = row;
-}
-
-void Item::setCol(int col){
-    position[0] = col;
-}

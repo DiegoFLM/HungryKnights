@@ -7,10 +7,14 @@ email: diego.ledesma@correounivalle.edu.co
 #include "food.h"
 
 
-Food::Food(int row, int col, FoodType _type):Item(row, col){
+Food::Food(line row, line col, foodType _type):Item(row, col){
     type = _type;
 }
 
-FoodType Food::getType(){
+foodType Food::getType(){
     return type;
+}
+
+void Food::eaten(){
+    this->takeOut();
 }
