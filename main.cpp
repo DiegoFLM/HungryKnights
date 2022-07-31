@@ -1,36 +1,57 @@
 #include <iostream>
 #include "node.h"
-#include "item.h"
-#include "horse.h"
-#include "food.h"
 
 
-/*En item.h:
-enum line {
-    a, b, c, d, e, f, g, h
+/*En node.h
+
+enum direction {
+    NNE, NEE, SEE, SSE, SSW, SWW, NWW, NNW
+};
+
+enum turn {
+    white, black
+};
+
+enum foodType {
+    grass = 1,
+    flower = 3,
+    apple = 5
 };
 
 
-
-
-
 */
+
+
+int myFunk(int player);
+
 int main(){
-    //Node nod(2, 7);
+    //std::srand(std::time(0));
+
+
+    std::random_device dev;
+    std::mt19937 rng(dev());
+    std::uniform_int_distribution<std::mt19937::result_type> dist6(1,6); // distribution in range [1, 6]
+
+    std::cout << dist6(rng) << std::endl;
+
 
     Node nod0;
 
-    Knight bKnight = Knight(a, e);
 
-    std::cout << "nod0.say1() = " << std::endl;
+    int sfp = myFunk(white);
 
-    std::cout << "Knight position: (" << bKnight.getRow() << ", " 
-        << bKnight.getCol() << ")" << std::endl;
+    //std::cout << "myFunk(black) = " << myFunk(black) << std::endl;
+    //std::cout << "rand() = " << std::rand() % 8 << std::endl;
 
-    std::cout << "Knight.isOnBoard() = " << bKnight.isOnBoard() << std::endl;
+
 
     return 0;
 }
+
+int myFunk(int player){
+    int result = player + 2;
+    return result;
+};
 
 
 
