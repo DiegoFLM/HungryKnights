@@ -7,10 +7,12 @@ email: diego.ledesma@correounivalle.edu.co
 #ifndef NODE_HH
 #define NODE_HH
 
-
-//#include <stdlib.h>
+#define _GLIBCXX_USE_CXX11_ABI 0
+#include <iostream>
+#include <string>
 #include <random>
 #include <ctime>
+
 
 /*
 0 :=NNE         (North North East)
@@ -27,43 +29,65 @@ enum direction {
 };
 
 enum turn {
-    white, black
+    whitesTurn, blacksTurn
 };
 
-enum foodType {
+enum items {
+    freeSquare = 0,
     grass = 1,
     flower = 3,
-    apple = 5
+    apple = 5,
+    wKnight = 6,
+    bKnight = 7
 };
 
 class Node {
     private:
         //variables
         static const int  N = 8;
-        static const int grassAmount = 14;
-        static const int flowersAmount = 5;
-        static const int applesAmount = 2;
         
+        static const int initialGrassAmount = 14;
+        static const int initialFlowersAmount = 5;
+        static const int initialApplesAmount = 2;
+        
+        Node* father;
         int wKnightPos[2];
         int bKnightPos[2];
         int board[N][N];
         turn playerInTurn;
         int wPoints;
         int bPoints;
-
+        
+        std::string errorMsgs;
 
 
         //methods
         void randomBoard();
+        void testOccurrencesOnBoard(items item, int expectedOcc);
 
     public:
         Node();
-        Node(int board[N][N], turn whoIsPlaying, int whitePoints, int blackPoints);
+        //Node(Node* father, int board[N][N], turn whoIsPlaying, int whitePoints, int blackPoints);
 
-        bool isPossible(int knightPos[2], direction dir);
-        void move(int knightPos[2], direction dir);
+
+        int randomLine();
+        void printBoard();
+        void testInitialSet();
         turn getPlayerInTurn();
         int getN();
+        int getWRow();
+        int getWCol();
+        int getBRow();
+        int getBCol();
+        int getWPoints();
+        int getBPoints();
+        int getSquareVal(int row, int col);
+        
+        bool isPossible(int initPos[2], direction dir);
+        Node partialExpansion(direction dir);
+        
+
+        
 };
 
 #else

@@ -1,4 +1,3 @@
-#include <iostream>
 #include "node.h"
 
 
@@ -9,13 +8,15 @@ enum direction {
 };
 
 enum turn {
-    white, black
+    whitesTurn, blacksTurn
 };
 
-enum foodType {
+enum items {
     grass = 1,
     flower = 3,
-    apple = 5
+    apple = 5,
+    blackK = 6,
+    whiteK = 7
 };
 
 
@@ -25,24 +26,15 @@ enum foodType {
 int myFunk(int player);
 
 int main(){
-    //std::srand(std::time(0));
-
-
-    std::random_device dev;
-    std::mt19937 rng(dev());
-    std::uniform_int_distribution<std::mt19937::result_type> dist6(1,6); // distribution in range [1, 6]
-
-    std::cout << dist6(rng) << std::endl;
-
 
     Node nod0;
+    Node nod1 = nod0;
 
 
-    int sfp = myFunk(white);
 
+    ///int sfp = myFunk(whitesTurn);
     //std::cout << "myFunk(black) = " << myFunk(black) << std::endl;
     //std::cout << "rand() = " << std::rand() % 8 << std::endl;
-
 
 
     return 0;
