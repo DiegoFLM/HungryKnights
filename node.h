@@ -4,14 +4,18 @@ Author: Diego Fabián Ledesma Motta
 email: diego.ledesma@correounivalle.edu.co
 */
 
-#ifndef NODE_HH
-#define NODE_HH
-
 #define _GLIBCXX_USE_CXX11_ABI 0
 #include <iostream>
 #include <string>
 #include <random>
 #include <ctime>
+
+//#include "alert.h"
+
+
+#ifndef NODE_HH
+#define NODE_HH
+
 
 
 /*
@@ -37,8 +41,8 @@ enum items {
     grass = 1,
     flower = 3,
     apple = 5,
-    wKnight = 6,
-    bKnight = 7
+    whiteK = 6,
+    blackK = 7
 };
 
 class Node {
@@ -57,9 +61,13 @@ class Node {
         turn playerInTurn;
         int wPoints;
         int bPoints;
-        
-        std::string errorMsgs;
 
+
+        int depth;
+        direction motherOp;
+
+        static std::string errorMsgs;
+        //Alert alerts;
 
         //methods
         void randomBoard();
@@ -69,7 +77,7 @@ class Node {
         Node();
         //Node(Node* father, int board[N][N], turn whoIsPlaying, int whitePoints, int blackPoints);
 
-
+        void showAlerts();
         int randomLine();
         void printBoard();
         void testInitialSet();
@@ -86,7 +94,7 @@ class Node {
         bool isPossible(int initPos[2], direction dir);
         Node partialExpansion(direction dir);
         
-
+        
         
 };
 
