@@ -4,8 +4,15 @@
 /*This constructor generates a random distribution of grass, flowers, apples, a black knight
 and a white knight*/
 
+//Alert Node::alerts;
+std::string Node::errorMsgs = "";
+
 Node::Node(){
-    std::string errorMsgs = "";
+    //Alert alerts = Alert();
+    std::string ms = "constructor inicial Node()";
+    //alerts.add( ms );
+    //alerts.addMessage(ms);
+    errorMsgs = "";
 
     randomBoard();
     printBoard();
@@ -14,6 +21,9 @@ Node::Node(){
     playerInTurn = whitesTurn;
     wPoints = 0;
     bPoints = 0;
+
+    depth = 0;
+    motherOp = (direction) -1;
 
     testInitialSet();
 }
@@ -137,14 +147,26 @@ void Node::testOccurrencesOnBoard(items it, int expectedOcc){
     }
 
     if (occurrences != expectedOcc){
-        errorMsgs += "FAILED: testOccurrencesOnBoard(" + std::to_string(it) 
+        /*errorMsgs += "FAILED: testOccurrencesOnBoard(" + std::to_string(it) 
             + ", " + std::to_string(expectedOcc) + ")\n";
-        errorMsgs += "occurrences: " + std::to_string(occurrences);
+
+        errorMsgs += "occurrences: " + std::to_string(occurrences);*/
+
+        /*alerts.add("FAILED: testOccurrencesOnBoard(" + std::to_string(it) 
+            + ", " + std::to_string(expectedOcc));
+
+        alerts.add("occurrences: " + std::to_string(occurrences));*/
+
     }
 }
 
 
 //PUBLIC METHODS:
+
+void Node::showAlerts(){
+    //std::cout << alerts.getAlerts() << std::endl;
+    //alerts.showMess();
+}
 
 int Node::randomLine(){
     std::random_device dev;
@@ -165,17 +187,12 @@ void Node::printBoard(){
 
 
 void Node::testInitialSet(){
-    //errorMsgs = "";
-
     testOccurrencesOnBoard(grass, 14);
     testOccurrencesOnBoard(flower, 5);
     testOccurrencesOnBoard(apple, 2);
     testOccurrencesOnBoard(wKnight, 1);
     testOccurrencesOnBoard(bKnight, 1);
     testOccurrencesOnBoard(freeSquare, 41);
-    
-
-    std::cout << errorMsgs << std::endl;
 }
 
 
@@ -218,20 +235,47 @@ int Node::getSquareVal(int row, int col){
 
 
 bool Node::isPossible(int initPos[2], direction dir){
-    if ( (initPos[0] < 0) || (initPos[1] < 0) || (initPos[0] > 7) || (initPos[1] > 7)  ){
+    int row = initPos[0];
+    int col = initPos[1];
+    if ( (row < 0) || (col < 0) || (row > 7) || (col > 7)  ){
+        /*alerts.add("Node::isPossible() - Impossible position received: (" + std::to_string(initPos[0]) 
+                + ", " + std::to_string(initPos[1]));*/
         return false;
     }
 
     switch (dir)
     {
     case NNE:
-        /* code */
+        if ((row < 2) || (col > 6) 
+                || ((board[row][col] == wKnight) && (board[row-2][col+1] == bKnight) ) 
+                || ((board[row][col] == bKnight) && (board[row-2][col+1] == wKnight) ) ){
+            return false;
+        }
         break;
+
+    case NEE:
+        if ((row < 1) || (col > 5) 
+                || ((board[row][col] == 6) && (board[row-1][col+2] == 7) ) 
+                || ((board[row][col] == 7) && (board[row-1][col+2] == 6) ) ){
+            return false;
+        }
+        break;
+
+    case SEE:
+        if ((row > 6) || (col > 5) 
+                || ((board[row][col] == 6) && (board[row-1][col+2] == 7) ) 
+                || ((board[row][col] == 7) && (board[row-1][col+2] == 6) ) ){
+            return false;
+        }
+        break;
+
     
     default:
+        return true;
         break;
     }
 
+    return true;
 /*enum direction {
     NNE, NEE, SEE, SSE, SSW, SWW, NWW, NNW
 };*/

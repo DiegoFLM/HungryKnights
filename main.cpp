@@ -31,12 +31,7 @@ int main(){
     Node nod1 = nod0;
 
 
-
-    ///int sfp = myFunk(whitesTurn);
-    //std::cout << "myFunk(black) = " << myFunk(black) << std::endl;
-    //std::cout << "rand() = " << std::rand() % 8 << std::endl;
-
-
+    //nod0.showAlerts();
     return 0;
 }
 
