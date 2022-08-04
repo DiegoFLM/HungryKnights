@@ -5,11 +5,11 @@
 and a white knight*/
 
 //Alert Node::alerts;
+int Node::rowIncrement;
+int Node::colIncrement;
 std::string Node::errorMsgs = "";
 
 Node::Node(){
-    errorMsgs = "";
-
     randomBoard();
     printBoard();
 
@@ -24,6 +24,35 @@ Node::Node(){
     testInitialSet();
 }
 
+Node::Node(Node* dad, int newBoard[N][N], int whitePoints, int blackPoints, direction dir){
+    father = dad;
+
+    int remFood = 0;
+    for (int row = 0; row < N; row++){
+        for (int col = 0; col < N; col++){
+            board[row][col] = newBoard[row][col];
+            if (board[row][col] == 6){
+                wKnightPos[0] = row;
+                wKnightPos[1] = col;
+            }else if (board[row][col] == 7){
+                bKnightPos[0] = row;
+                bKnightPos[1] = col;
+            }else if(board[row][col] > 0){
+                remFood++;
+            }
+        }
+    }
+    remainingFood = remFood;
+
+    playerInTurn =  (turn) !(dad->getPlayerInTurn());
+    wPoints = whitePoints;
+    bPoints = blackPoints;
+    
+    depth = 1 + dad->getDepth();
+    motherOp = dir;
+}
+
+
 
 //PRIVATE METHODS:
 
@@ -37,123 +66,68 @@ Node::Node(){
     };  
 */
 void Node::randomBoard(){
-        int grassAmount = initialGrassAmount;
-        int flowersAmount = initialFlowersAmount;
-        int applesAmount = initialApplesAmount;
-        int wKnightAmount = 1;
-        int bKnightAmount = 1;
-        int randSquare[2];
+    int grassAmount = initialGrassAmount;
+    int flowersAmount = initialFlowersAmount;
+    int applesAmount = initialApplesAmount;
+    int wKnightAmount = 1;
+    int bKnightAmount = 1;
+    int randSquare[2];
+    int remFood = 0;
 
     for (int r = 0; r < N; r++){
         for (int c = 0; c < N; c++){
             board[r][c] = 0;
         }   
     }
-
+    
     //random distribution of grass
-    while (grassAmount > 0){
-        randSquare[0] = randomLine();
-        randSquare[1] = randomLine(); 
-
-        //occupied square
-        if ( board[randSquare[0]] [randSquare[1]] > 0 ){
-            //errorMsgs += "Collision for grass\n";
-            continue;
-        } else {
-            board[randSquare[0]] [randSquare[1]] = grass;
-            grassAmount--;
-        }
-    }
-
+    this->randPutItem(grass, grassAmount);
+    
     //random distribution of flowers
-    while (flowersAmount > 0){
-        randSquare[0] = randomLine();
-        randSquare[1] = randomLine(); 
-
-        //occupied square
-        if ( board[randSquare[0]] [randSquare[1]] > 0 ){
-            //errorMsgs += "Collision for flower\n";
-            continue;
-        } else {
-            board[randSquare[0]] [randSquare[1]] = flower;
-            flowersAmount--;
-        }
-    }
+    this->randPutItem(flower, flowersAmount);
 
     //random distribution of apples
-    while (applesAmount > 0){
-        randSquare[0] = randomLine();
-        randSquare[1] = randomLine(); 
-
-        //occupied square
-        if ( board[randSquare[0]] [randSquare[1]] > 0 ){
-            //errorMsgs += "Collision for apple\n";
-            continue;
-        } else {
-            board[randSquare[0]] [randSquare[1]] = apple;
-            applesAmount--;
-        }
-    }
+    this->randPutItem(apple, applesAmount);
 
     //random square for the white knight
-    while (wKnightAmount > 0){
-        randSquare[0] = randomLine();
-        randSquare[1] = randomLine(); 
-
-        //occupied square
-        if ( board[randSquare[0]] [randSquare[1]] > 0 ){
-            //errorMsgs += "Collision for wKnight\n";
-            continue;
-        } else {
-            board[randSquare[0]] [randSquare[1]] = whiteK;
-            wKnightPos[0] = randSquare[0];
-            wKnightPos[1] = randSquare[1];
-            wKnightAmount--;
-        }
-    }
-
-        //random square for the black knight
-    while (bKnightAmount > 0){
-        randSquare[0] = randomLine();
-        randSquare[1] = randomLine(); 
-
-        //occupied square
-        if ( board[randSquare[0]] [randSquare[1]] > 0 ){
-            //errorMsgs += "Collision for bKnight\n";
-            continue;
-        } else {
-            board[randSquare[0]] [randSquare[1]] = blackK;
-            bKnightPos[0] = randSquare[0];
-            bKnightPos[1] = randSquare[1];
-            bKnightAmount--;
-        }
-    }
-}
-
-void Node::testOccurrencesOnBoard(items it, int expectedOcc){
-    int occurrences = 0;
-
+    this->randPutItem(whiteK, wKnightAmount);
+    
+    //random square for the black knight
+    this->randPutItem(blackK, bKnightAmount);
+    
     for (int r = 0; r < N; r++){
         for (int c = 0; c < N; c++){
-            if ( board[r][c] == it ){
-                occurrences++;
+            if (board[r][c] == 6){
+                wKnightPos[0] = r;
+                wKnightPos[1] = c;
+            }else if (board[r][c] == 7){
+                bKnightPos[0] = r;
+                bKnightPos[1] = c;
+            }else if(board[r][c] > 0){
+                remFood++;
             }
+        }   
+    }
+
+    remainingFood = remFood;
+}
+
+void Node::randPutItem(items it, int amount){
+    int randSquare[2];
+    while (amount > 0){
+        randSquare[0] = randomLine();
+        randSquare[1] = randomLine(); 
+
+        //occupied square
+        if ( board[randSquare[0]] [randSquare[1]] > 0 ){
+            continue;
+        } else { //free square
+            board[randSquare[0]] [randSquare[1]] = it;
+            amount--;
         }
     }
-
-    if (occurrences != expectedOcc){
-        errorMsgs += "FAILED: testOccurrencesOnBoard(" + std::to_string(it) 
-            + ", " + std::to_string(expectedOcc) + ")\n";
-
-        errorMsgs += "occurrences: " + std::to_string(occurrences);
-
-        /*alerts.add("FAILED: testOccurrencesOnBoard(" + std::to_string(it) 
-            + ", " + std::to_string(expectedOcc));
-
-        alerts.add("occurrences: " + std::to_string(occurrences));*/
-
-    }
 }
+
 
 
 //PUBLIC METHODS:
@@ -179,6 +153,35 @@ void Node::printBoard(){
     }
 }
 
+void Node::testOccurrencesOnBoard(items it, int expectedOcc){
+    int occurrences = 0;
+
+    for (int r = 0; r < N; r++){
+        for (int c = 0; c < N; c++){
+            if ( board[r][c] == it ){
+                occurrences++;
+            }
+        }
+    }
+
+    if (occurrences != expectedOcc){
+        errorMsgs += "FAILED: testOccurrencesOnBoard(" + std::to_string(it) 
+            + ", " + std::to_string(expectedOcc) + ")\n";
+
+        errorMsgs += "occurrences: " + std::to_string(occurrences);
+    }
+}
+
+int Node::countInBoard(items it){
+    int count = 0;
+    for (int col = 0; col < N; col++){
+        for (int row = 0; row < N; row++){
+            if (board[row][col] == it)
+                count++;
+        }
+    }
+    return count;
+}
 
 void Node::testInitialSet(){
     testOccurrencesOnBoard(grass, 14);
@@ -189,6 +192,13 @@ void Node::testInitialSet(){
     testOccurrencesOnBoard(freeSquare, 41);
 }
 
+int Node::getDepth(){
+    return depth;
+}
+
+direction Node::getMotherOp(){
+    return motherOp;
+}
 
 turn Node::getPlayerInTurn(){
     return playerInTurn;
@@ -231,8 +241,7 @@ int Node::getSquareVal(int row, int col){
 bool Node::isPossible(int initPos[2], direction dir){
     int row = initPos[0];
     int col = initPos[1];
-    int rowIncrement;
-    int colIncrement;
+    
     if ( (row < 0) || (col < 0) || (row > 7) || (col > 7)  ){
         /*alerts.add("Node::isPossible() - Impossible position received: (" + std::to_string(initPos[0]) 
                 + ", " + std::to_string(initPos[1]));*/
@@ -295,6 +304,8 @@ bool Node::isPossible(int initPos[2], direction dir){
         break;
     }
 
+    std::cout << "origin (ispossible): {" << row << ", " << col << "}" << std::endl; 
+
     if (   (row + rowIncrement > 7 ) || (row + rowIncrement < 0 )
         || (col + colIncrement > 7 ) || (col + colIncrement < 0)
         || ((board[row][col] == whiteK) && (board[row + rowIncrement][col + colIncrement] == blackK) ) 
@@ -306,3 +317,62 @@ bool Node::isPossible(int initPos[2], direction dir){
     }
 }
 
+
+Node Node::partialExpansion(direction dir){
+    int origin[2];
+    int sonsWhitePoints = wPoints;
+    int sonsBlackPoints = bPoints;
+
+    if (playerInTurn == whitesTurn){
+        origin[0] = wKnightPos[0];
+        origin[1] = wKnightPos[1];
+        std::cout << "origin: {" << origin[0] << ", " << origin[1] << "}" << std::endl; 
+        sonsWhitePoints += board[origin[0] + rowIncrement] [origin[1] + colIncrement];
+    }else{
+        origin[0] = bKnightPos[0];
+        origin[1] = bKnightPos[1];
+        std::cout << "origin: {" << origin[0] << ", " << origin[1] << "}" << std::endl;
+        sonsBlackPoints += board[origin[0] + rowIncrement] [origin[1] + colIncrement];
+    }
+
+    if (! this->isPossible(origin, dir)){
+        errorMsgs += "ERROR: IMPOSSIBLE DIRECION IN: partialExpansion(" + std::to_string(dir)
+            + ");" ;
+            Node nod = Node();
+            return nod;
+    }
+    
+    /*Node* father;
+        int wKnightPos[2];
+        int bKnightPos[2];
+        int board[N][N];
+        turn playerInTurn;
+        int wPoints;
+        int bPoints;
+        int remainingFood;
+
+        int depth;
+        direction motherOp;
+
+        static std::string errorMsgs;
+    */
+    
+
+    
+
+
+    int sonsBoard[N][N];
+
+    for (int row = 0; row < N; row++){
+        for (int col = 0; col < N; col++){
+            sonsBoard[row][col] = board[row][col];
+        }
+    }
+
+    sonsBoard[origin[0] + rowIncrement][origin[1] + colIncrement] = board[origin[0]] [origin[1]];
+    sonsBoard[origin[0]] [origin[1]] = 0;
+
+
+    Node nod(this, sonsBoard, sonsWhitePoints, sonsBlackPoints, dir);
+    return nod;
+}

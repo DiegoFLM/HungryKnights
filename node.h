@@ -53,6 +53,9 @@ class Node {
         static const int initialGrassAmount = 14;
         static const int initialFlowersAmount = 5;
         static const int initialApplesAmount = 2;
+        static int rowIncrement;
+        static int colIncrement;
+        static std::string errorMsgs;
         
         Node* father;
         int wKnightPos[2];
@@ -61,26 +64,27 @@ class Node {
         turn playerInTurn;
         int wPoints;
         int bPoints;
-
+        int remainingFood;
 
         int depth;
         direction motherOp;
 
-        static std::string errorMsgs;
-        //Alert alerts;
-
         //methods
         void randomBoard();
-        void testOccurrencesOnBoard(items item, int expectedOcc);
-
+        void randPutItem(items it, int amount);
+        
     public:
         Node();
-        //Node(Node* father, int board[N][N], turn whoIsPlaying, int whitePoints, int blackPoints);
+        Node(Node* father, int newBoard[N][N], int whitePoints, int blackPoints,  direction dir);
 
         void showAlerts();
         int randomLine();
         void printBoard();
+        void testOccurrencesOnBoard(items item, int expectedOcc);
+        int countInBoard(items it);
         void testInitialSet();
+        int getDepth();
+        direction getMotherOp();
         turn getPlayerInTurn();
         int getN();
         int getWRow();
@@ -90,6 +94,7 @@ class Node {
         int getWPoints();
         int getBPoints();
         int getSquareVal(int row, int col);
+        
         
         bool isPossible(int initPos[2], direction dir);
         Node partialExpansion(direction dir);
