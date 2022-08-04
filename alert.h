@@ -1,22 +1,21 @@
 
-#include <iostream>
-#include <string>
+
 
 #ifndef ALERT_HH
 #define ALERT_HH
 
-
+#include <iostream>
+#include <string>
 
 
 class Alert{
     private:
-        std::string alertMessages;
+        static std::string alerts;
 
     public:
         Alert();
         void addMessage(std::string newMessage);
-        //std::string getAlerts();
-        void showMess();
+        std::string getAlerts();
 };
 
 #else

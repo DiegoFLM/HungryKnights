@@ -1,22 +1,19 @@
 #include "alert.h"
 
-//std::string Alert::alertMessages;
+std::string Alert::alerts;
 
 Alert::Alert(){
-    alertMessages = "";
+    alerts = " ";
 }
 
 void Alert::addMessage(std::string newMessage){
-    alertMessages += newMessage + "\n";
+    alerts += newMessage + "\n";
 }
 
-/*
+
 std::string Alert::getAlerts(){
-    return alertMessages;
-}*/
-
-void Alert::showMess(){
-    std::cout << alertMessages << std::endl;
+    return alerts;
 }
+
 
 

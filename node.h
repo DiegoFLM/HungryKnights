@@ -4,19 +4,19 @@ Author: Diego Fabián Ledesma Motta
 email: diego.ledesma@correounivalle.edu.co
 */
 
+
+
+
+#ifndef NODE_HH
+#define NODE_HH
+
 #define _GLIBCXX_USE_CXX11_ABI 0
 #include <iostream>
 #include <string>
 #include <random>
 #include <ctime>
 
-//#include "alert.h"
-
-
-#ifndef NODE_HH
-#define NODE_HH
-
-
+#include "alert.h"
 
 /*
 0 :=NNE         (North North East)
@@ -67,7 +67,7 @@ class Node {
         direction motherOp;
 
         static std::string errorMsgs;
-        //Alert alerts;
+        Alert alertMsg;
 
         //methods
         void randomBoard();
