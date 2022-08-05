@@ -73,6 +73,7 @@ class Node {
         int offspring; //Cuántos nodos lo tienen como padre
         int receivedUtilities; //Cuántos nodos hijos le han reportado su utilidad.
         int max;
+        Node* favoriteSon;
 
         //methods
         void randomBoard();
@@ -104,15 +105,16 @@ class Node {
         int getBPoints();
         int getSquareVal(int row, int col);
         
-        bool isPossible(int initPos[2], direction dir);
+        bool isPossible(/*int initPos[2], */direction dir);
         Node partialExpansion(direction dir);
         
         //minMax
         int leafUtility();
-        int estimatedUtility();/*int offspring; //Cuántos nodos lo tienen como padre
+        int estimatedUtility();/*int offspring; //How many nodes have it as their father.
         int receivedUtilities; revisar que sean iguales:*/
-        void receiveOpponentUtility(int ut);
+        void receiveOpponentsUtility(int ut, Node* son);
         int getMax();
+        Node getNewNode();
         
         
 };

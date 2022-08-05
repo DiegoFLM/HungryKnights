@@ -14,7 +14,6 @@ Node::Node(){
     id = biggestId + 1;
     biggestId = id;
     randomBoard();
-    printBoard();
 
     father = nullptr;      
     playerInTurn = whitesTurn;
@@ -259,19 +258,28 @@ int Node::getSquareVal(int row, int col){
     return board[row][col];
 }
 
-bool Node::isPossible(int initPos[2], direction dir){
-    int row = initPos[0];
-    int col = initPos[1];
+bool Node::isPossible(direction dir){
+    int row;
+    int col;
+
+    if (playerInTurn == whitesTurn){
+        row = wKnightPos[0];
+        col = wKnightPos[1];
+    } else {
+        row = bKnightPos[0];
+        col = bKnightPos[1];
+    }
+
     
     if ( (row < 0) || (col < 0) || (row > 7) || (col > 7)  ){
-        /*alerts.add("Node::isPossible() - Impossible position received: (" + std::to_string(initPos[0]) 
-                + ", " + std::to_string(initPos[1]));*/
-        errorMsgs += "Invalid direction received: Node::isPossible(" + std::to_string(initPos[0]) 
-                + ", " + std::to_string(initPos[1]) + ", " + std::to_string(dir) +")\n";
+        /*alerts.add("Node::isPossible() - Impossible position received: (" + std::to_string(row) 
+                + ", " + std::to_string(col));*/
+        errorMsgs += "Invalid direction received: Node::isPossible(" + std::to_string(row) 
+                + ", " + std::to_string(col) + ", " + std::to_string(dir) +")\n";
         return false;
     }else if( (board[row][col] != whiteK) && (board[row][col] != blackK) ){
-        errorMsgs += "No knight in the position: Node::isPossible(" + std::to_string(initPos[0]) 
-                + ", " + std::to_string(initPos[1]) + ", " + std::to_string(dir) +")\n";
+        errorMsgs += "No knight in the position: Node::isPossible(" + std::to_string(row) 
+                + ", " + std::to_string(col) + ", " + std::to_string(dir) +")\n";
         return false;
     }
 
@@ -319,21 +327,22 @@ bool Node::isPossible(int initPos[2], direction dir){
         break;
     
     default:
-        errorMsgs += "direction not detected: Node::isPossible(" + std::to_string(initPos[0]) 
-                + ", " + std::to_string(initPos[1]) + ", " + std::to_string(dir) +")\n";
+        errorMsgs += "direction not detected: Node::isPossible(" + std::to_string(row) 
+                + ", " + std::to_string(col) + ", " + std::to_string(dir) +")\n";
         return false;
         break;
     }
 
-    std::cout << "origin (ispossible): {" << row << ", " << col << "}" << std::endl; 
 
     if (   (row + rowIncrement > 7 ) || (row + rowIncrement < 0 )
         || (col + colIncrement > 7 ) || (col + colIncrement < 0)
         || ((board[row][col] == whiteK) && (board[row + rowIncrement][col + colIncrement] == blackK) ) 
         || ((board[row][col] == blackK) && (board[row + rowIncrement][col + colIncrement] == whiteK) ) )
     {
+        std::cout << "is not possible: {" << row << ", " << col << "} dir: " << dir << std::endl; 
         return false;
     } else {
+        std::cout << "is possible: {" << row << ", " << col << "} dir: " << dir << std::endl;
         return true;
     }
 }
@@ -347,16 +356,16 @@ Node Node::partialExpansion(direction dir){
     if (playerInTurn == whitesTurn){
         origin[0] = wKnightPos[0];
         origin[1] = wKnightPos[1];
-        std::cout << "origin: {" << origin[0] << ", " << origin[1] << "}" << std::endl; 
+        //std::cout << "origin: {" << origin[0] << ", " << origin[1] << "}" << std::endl; 
         sonsWhitePoints += board[origin[0] + rowIncrement] [origin[1] + colIncrement];
     }else{
         origin[0] = bKnightPos[0];
         origin[1] = bKnightPos[1];
-        std::cout << "origin: {" << origin[0] << ", " << origin[1] << "}" << std::endl;
+        //std::cout << "origin: {" << origin[0] << ", " << origin[1] << "}" << std::endl;
         sonsBlackPoints += board[origin[0] + rowIncrement] [origin[1] + colIncrement];
     }
 
-    if (! this->isPossible(origin, dir)){
+    if (! this->isPossible(dir)){
         errorMsgs += "ERROR: IMPOSSIBLE DIRECION IN: partialExpansion(" + std::to_string(dir)
             + ");" ;
             Node nod = Node();
@@ -374,11 +383,10 @@ Node Node::partialExpansion(direction dir){
     sonsBoard[origin[0] + rowIncrement][origin[1] + colIncrement] = board[origin[0]] [origin[1]];
     sonsBoard[origin[0]] [origin[1]] = 0;
 
-
+    offspring += 1;
     Node nod(this, sonsBoard, sonsWhitePoints, sonsBlackPoints, dir);
     return nod;
 }
-
 
 
 int Node::leafUtility(){
@@ -392,19 +400,37 @@ int Node::leafUtility(){
 }
 
 
-void Node::receiveOpponentUtility(int opUt){
+void Node::receiveOpponentsUtility(int opUt, Node* son){
     int ut = -opUt;
     if (receivedUtilities == 0){
         max = ut;
+        favoriteSon = son;
     }else{
         if (ut > max){
             max = ut;
+            favoriteSon = son;
         }
     }
     receivedUtilities++;
+
+    if ( (receivedUtilities == offspring) && (offspring > 0) ){
+        this->getFather()->receiveOpponentsUtility( this->leafUtility(), this );
+    }else if (offspring == 0){
+        errorMsgs += "ERROR. receiveOpponentsUtility invoked from a Node with no offspring. id = " + id;
+    }
+
 }
 
 int Node::getMax(){
+    if(receivedUtilities != offspring){
+        errorMsgs += "WARNING: receivedUtilities != offspring in Node::getMax()";
+        errorMsgs += "id = " + id;
+    }
     return max;
 }
 
+
+Node Node::getNewNode(){
+    Node nod = Node();
+    return nod;
+}
