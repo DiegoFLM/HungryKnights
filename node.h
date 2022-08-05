@@ -16,8 +16,6 @@ email: diego.ledesma@correounivalle.edu.co
 #ifndef NODE_HH
 #define NODE_HH
 
-
-
 /*
 0 :=NNE         (North North East)
 1 :=NEE         (North East East)
@@ -56,7 +54,9 @@ class Node {
         static int rowIncrement;
         static int colIncrement;
         static std::string errorMsgs;
+        static int biggestId;
         
+        int id;
         Node* father;
         int wKnightPos[2];
         int bKnightPos[2];
@@ -68,6 +68,11 @@ class Node {
 
         int depth;
         direction motherOp;
+
+        //minMax
+        int offspring; //Cuántos nodos lo tienen como padre
+        int receivedUtilities; //Cuántos nodos hijos le han reportado su utilidad.
+        int max;
 
         //methods
         void randomBoard();
@@ -84,9 +89,13 @@ class Node {
         int countInBoard(items it);
         void testInitialSet();
         int getDepth();
+        Node* getFather();
+        int getId();
         direction getMotherOp();
-        turn getPlayerInTurn();
         int getN();
+        turn getPlayerInTurn();
+        int getRemainingFood();
+        
         int getWRow();
         int getWCol();
         int getBRow();
@@ -95,10 +104,15 @@ class Node {
         int getBPoints();
         int getSquareVal(int row, int col);
         
-        
         bool isPossible(int initPos[2], direction dir);
         Node partialExpansion(direction dir);
         
+        //minMax
+        int leafUtility();
+        int estimatedUtility();/*int offspring; //Cuántos nodos lo tienen como padre
+        int receivedUtilities; revisar que sean iguales:*/
+        void receiveOpponentUtility(int ut);
+        int getMax();
         
         
 };

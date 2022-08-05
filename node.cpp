@@ -8,8 +8,11 @@ and a white knight*/
 int Node::rowIncrement;
 int Node::colIncrement;
 std::string Node::errorMsgs = "";
+int Node::biggestId = -1;
 
 Node::Node(){
+    id = biggestId + 1;
+    biggestId = id;
     randomBoard();
     printBoard();
 
@@ -21,10 +24,15 @@ Node::Node(){
     depth = 0;
     motherOp = (direction) -1;
 
+    offspring = 0;
+    receivedUtilities = 0;
+
     testInitialSet();
 }
 
 Node::Node(Node* dad, int newBoard[N][N], int whitePoints, int blackPoints, direction dir){
+    id = biggestId + 1;
+    biggestId = id;
     father = dad;
 
     int remFood = 0;
@@ -50,6 +58,9 @@ Node::Node(Node* dad, int newBoard[N][N], int whitePoints, int blackPoints, dire
     
     depth = 1 + dad->getDepth();
     motherOp = dir;
+
+    offspring = 0;
+    receivedUtilities = 0;
 }
 
 
@@ -196,17 +207,28 @@ int Node::getDepth(){
     return depth;
 }
 
+Node* Node::getFather(){
+    return father;
+}
+
+int Node::getId(){
+    return id;
+}
+
 direction Node::getMotherOp(){
     return motherOp;
+}
+
+int Node::getN(){
+    return N;
 }
 
 turn Node::getPlayerInTurn(){
     return playerInTurn;
 }
 
-
-int Node::getN(){
-    return N;
+int Node::getRemainingFood(){
+    return remainingFood;
 }
 
 int Node::getWRow(){
@@ -236,7 +258,6 @@ int Node::getBPoints(){
 int Node::getSquareVal(int row, int col){
     return board[row][col];
 }
-
 
 bool Node::isPossible(int initPos[2], direction dir){
     int row = initPos[0];
@@ -341,25 +362,6 @@ Node Node::partialExpansion(direction dir){
             Node nod = Node();
             return nod;
     }
-    
-    /*Node* father;
-        int wKnightPos[2];
-        int bKnightPos[2];
-        int board[N][N];
-        turn playerInTurn;
-        int wPoints;
-        int bPoints;
-        int remainingFood;
-
-        int depth;
-        direction motherOp;
-
-        static std::string errorMsgs;
-    */
-    
-
-    
-
 
     int sonsBoard[N][N];
 
@@ -376,3 +378,33 @@ Node Node::partialExpansion(direction dir){
     Node nod(this, sonsBoard, sonsWhitePoints, sonsBlackPoints, dir);
     return nod;
 }
+
+
+
+int Node::leafUtility(){
+    int utility;
+    if (playerInTurn == whitesTurn){
+        utility = wPoints - bPoints;
+    }else {
+        utility = bPoints - wPoints;
+    }
+    return utility;
+}
+
+
+void Node::receiveOpponentUtility(int opUt){
+    int ut = -opUt;
+    if (receivedUtilities == 0){
+        max = ut;
+    }else{
+        if (ut > max){
+            max = ut;
+        }
+    }
+    receivedUtilities++;
+}
+
+int Node::getMax(){
+    return max;
+}
+
