@@ -75,6 +75,10 @@ Node::Node(Node* dad, int newBoard[N][N], int whitePoints, int blackPoints, dire
         bKnigh = 7
     };  
 */
+void Node::sendAlert(std::string al){
+    errorMsgs += al + "\n";
+}
+
 void Node::randomBoard(){
     int grassAmount = initialGrassAmount;
     int flowersAmount = initialFlowersAmount;
@@ -208,6 +212,10 @@ int Node::getDepth(){
 
 Node* Node::getFather(){
     return father;
+}
+
+Node* Node::getFavoriteSon(){
+    return favoriteSon;
 }
 
 int Node::getId(){
@@ -417,6 +425,8 @@ void Node::receiveOpponentsUtility(int opUt, Node* son){
         this->getFather()->receiveOpponentsUtility( this->leafUtility(), this );
     }else if (offspring == 0){
         errorMsgs += "ERROR. receiveOpponentsUtility invoked from a Node with no offspring. id = " + id;
+    } else if (receivedUtilities > offspring){
+        std::cout << "last receiveOpponentsUtility for id = " << id << std::endl;
     }
 
 }
@@ -430,7 +440,3 @@ int Node::getMax(){
 }
 
 
-Node Node::getNewNode(){
-    Node nod = Node();
-    return nod;
-}

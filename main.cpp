@@ -33,8 +33,8 @@ int main(){
     std::cout << std::endl << "hand.getFront()->getPlayerInTurn() = " 
         << (int) hand.getNodeRegistryFront()->getPlayerInTurn() << std::endl << std::endl;
     
-    hand.expandFirstL();
-    hand.expandFirstL();
+    //hand.expandFirstL();
+    //hand.expandFirstL();
     hand.printL();
 
     return 0;

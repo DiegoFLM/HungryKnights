@@ -11,7 +11,6 @@ email: diego.ledesma@correounivalle.edu.co
 
 #include <iterator>
 #include <list>
-#include <vector>
 #include "node.h"
 
 
@@ -24,13 +23,15 @@ class Handler{
         std::list <Node> nodeRegistry;
         std::list <Node *> l;
         bool victory;
-        std::vector <Node*> solutionPath;
+        std::list <Node *> history;
         int victorysize;
         int numberOfExpansions;
 
-        Node* currentRoot;
-        difficulty maxDepth;
+        //Node* currentRoot;
+        difficulty mode; //max depth of the minimax decision tree
         direction chosenPlay; 
+        bool gameInProgress;
+        
 
     public:
         Handler();
@@ -39,12 +40,19 @@ class Handler{
         void printNodeRegistry();
         void printL();
         
+        difficulty getMode();
+        Node* getNodeRegistryBack();
+        Node* getNodeRegistryFront();    
 
-        Node* whiteMovement();
-        void blackMovement(direction dir);
+        direction minimax(); 
+        void setMode(difficulty mod);
         
+        Node* getLastPlay();
+        void blackPlay(direction dir);
+        
+        void newGame(difficulty mod);
 
-        Node* getNodeRegistryFront();
+        
 
 
 };

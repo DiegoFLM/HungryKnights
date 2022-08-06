@@ -83,6 +83,7 @@ class Node {
         Node();
         Node(Node* father, int newBoard[N][N], int whitePoints, int blackPoints,  direction dir);
 
+        void sendAlert(std::string al);
         void showAlerts();
         int randomLine();
         void printBoard();
@@ -91,6 +92,7 @@ class Node {
         void testInitialSet();
         int getDepth();
         Node* getFather();
+        Node* getFavoriteSon();
         int getId();
         direction getMotherOp();
         int getN();
@@ -114,7 +116,7 @@ class Node {
         int receivedUtilities; revisar que sean iguales:*/
         void receiveOpponentsUtility(int ut, Node* son);
         int getMax();
-        Node getNewNode();
+        
         
         
 };
