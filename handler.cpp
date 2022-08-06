@@ -18,7 +18,7 @@ void Handler::expandNode(Node* expandingNode){
         return;
     }
 
-    if( (expandingNode->getDepth() - history.back()->getDepth() ) < mode + 1 ){
+    if( (expandingNode->getDepth() - history.back()->getDepth() ) < mode ){
         for (int integerDir = NNE; integerDir <= NNW;  integerDir++){
             if ( expandingNode->isPossible((direction)integerDir) ){
                 nodeRegistry.push_back( expandingNode->partialExpansion( (direction)integerDir ) );
@@ -108,6 +108,8 @@ direction Handler::minimax(){ //This method applies minimax and introduces the b
     //}
     nodeRegistry.push_back( history.back()->partialExpansion(chosenDir) );
     history.push_back( &nodeRegistry.back() );
+    if ( history.back()->getRemainingFood() == 0 )
+            gameInProgress = false;
     return chosenDir;
 }
 

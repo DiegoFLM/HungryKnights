@@ -9,7 +9,7 @@ int main(){
     /*enum difficulty{
     novice = 2, amateur = 4, expert = 6
     };*/
-    hand.newGame(novice);
+    hand.newGame(expert);
     hand.showAlerts();
 
     return 0;
