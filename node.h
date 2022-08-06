@@ -51,6 +51,8 @@ class Node {
         static const int initialGrassAmount = 14;
         static const int initialFlowersAmount = 5;
         static const int initialApplesAmount = 2;
+        static int rowIncrement;
+        static int colIncrement;
         
         static std::string errorMsgs;
         static int biggestId;
@@ -64,8 +66,7 @@ class Node {
         int wPoints;
         int bPoints;
         int remainingFood;
-        int rowIncrement;
-        int colIncrement;
+        
 
         int depth;
         direction motherOp;

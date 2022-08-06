@@ -5,8 +5,8 @@
 and a white knight*/
 
 //Alert Node::alerts;
-//int Node::rowIncrement;
-//int Node::colIncrement;
+int Node::rowIncrement;
+int Node::colIncrement;
 std::string Node::errorMsgs = "";
 int Node::biggestId = -1;
 
@@ -361,6 +361,13 @@ Node Node::partialExpansion(direction dir){
     int sonsWhitePoints = wPoints;
     int sonsBlackPoints = bPoints;
 
+    if (! this->isPossible(dir)){
+        errorMsgs += "ERROR: IMPOSSIBLE DIRECION IN: partialExpansion(" + std::to_string(dir)
+            + ");" ;
+            Node nod = Node();
+            return nod;
+    }
+
     if (playerInTurn == whitesTurn){
         origin[0] = wKnightPos[0];
         origin[1] = wKnightPos[1];
@@ -371,12 +378,7 @@ Node Node::partialExpansion(direction dir){
         sonsBlackPoints += board[origin[0] + rowIncrement] [origin[1] + colIncrement];
     }
 
-    if (! this->isPossible(dir)){
-        errorMsgs += "ERROR: IMPOSSIBLE DIRECION IN: partialExpansion(" + std::to_string(dir)
-            + ");" ;
-            Node nod = Node();
-            return nod;
-    }
+    
 
     int sonsBoard[N][N];
 
@@ -388,6 +390,9 @@ Node Node::partialExpansion(direction dir){
 
     sonsBoard[origin[0] + rowIncrement][origin[1] + colIncrement] = board[origin[0]] [origin[1]];
     sonsBoard[origin[0]] [origin[1]] = 0;
+
+    //std::cout << "sonsWhitePoints: " << sonsWhitePoints << std::endl;
+    //std::cout << "sonsBlackPoints: " << sonsBlackPoints << std::endl;
 
     offspring += 1;
     Node nod(this, sonsBoard, sonsWhitePoints, sonsBlackPoints, dir);

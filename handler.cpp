@@ -18,7 +18,7 @@ void Handler::expandNode(Node* expandingNode){
         return;
     }
 
-    if( (expandingNode->getDepth() - history.back()->getDepth() ) < mode ){
+    if( (expandingNode->getDepth() - history.back()->getDepth() ) < mode + 1 ){
         for (int integerDir = NNE; integerDir <= NNW;  integerDir++){
             if ( expandingNode->isPossible((direction)integerDir) ){
                 nodeRegistry.push_back( expandingNode->partialExpansion( (direction)integerDir ) );
@@ -91,7 +91,7 @@ direction Handler::minimax(){ //This method applies minimax and introduces the b
     if ( history.back()->getPlayerInTurn() == whitesTurn ){
         if ( history.back()->getRemainingFood() > 0) {
             l.push_back( history.back() );
-            while ( (!l.empty()) && ((l.front()->getDepth() - history.back()->getDepth() ) <= mode) ){
+            while ( (!l.empty()) /*&& ((l.front()->getDepth() - history.back()->getDepth() ) <= mode + 1)*/ ){
                 this->expandNode( l.front() );
             }
         }else{
@@ -103,6 +103,9 @@ direction Handler::minimax(){ //This method applies minimax and introduces the b
         return (direction)-1;
     }
     direction chosenDir = history.back()->getFavoriteSon()->getMotherOp();
+    //if (!history.back()->isPossible()){
+
+    //}
     nodeRegistry.push_back( history.back()->partialExpansion(chosenDir) );
     history.push_back( &nodeRegistry.back() );
     return chosenDir;
@@ -138,9 +141,9 @@ void Handler::newGame(difficulty mod){
     gameInProgress = true;
 
 
-    Node nod0 = Node();
-    nod0.resetErrorMsgs();
-    nodeRegistry.push_back( nod0 );
+    Node* nod0 = new Node();
+    nod0->resetErrorMsgs();
+    nodeRegistry.push_back( *nod0 );
     history.push_back(&nodeRegistry.back());
     std::cout << "Starting position: " << std::endl;
     printCurrentPosition();
