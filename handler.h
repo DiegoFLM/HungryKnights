@@ -22,7 +22,6 @@ class Handler{
     private: 
         std::list <Node> nodeRegistry;
         std::list <Node *> l;
-        bool victory;
         std::list <Node *> history;
         int victorysize;
         int numberOfExpansions;
@@ -37,6 +36,7 @@ class Handler{
         Handler();
         void expandNode(Node* expandingNode);
         void expandFirstL();
+        void printCurrentPosition();
         void printNodeRegistry();
         void printL();
         
@@ -45,12 +45,15 @@ class Handler{
         Node* getNodeRegistryFront();    
 
         direction minimax(); 
-        void setMode(difficulty mod);
+        //void setMode(difficulty mod);
         
         Node* getLastPlay();
         void blackPlay(direction dir);
         
         void newGame(difficulty mod);
+        
+
+        void showAlerts();
 
         
 

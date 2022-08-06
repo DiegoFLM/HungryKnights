@@ -5,8 +5,8 @@
 and a white knight*/
 
 //Alert Node::alerts;
-int Node::rowIncrement;
-int Node::colIncrement;
+//int Node::rowIncrement;
+//int Node::colIncrement;
 std::string Node::errorMsgs = "";
 int Node::biggestId = -1;
 
@@ -38,10 +38,10 @@ Node::Node(Node* dad, int newBoard[N][N], int whitePoints, int blackPoints, dire
     for (int row = 0; row < N; row++){
         for (int col = 0; col < N; col++){
             board[row][col] = newBoard[row][col];
-            if (board[row][col] == 6){
+            if (board[row][col] == whiteK){
                 wKnightPos[0] = row;
                 wKnightPos[1] = col;
-            }else if (board[row][col] == 7){
+            }else if (board[row][col] == blackK){
                 bKnightPos[0] = row;
                 bKnightPos[1] = col;
             }else if(board[row][col] > 0){
@@ -347,10 +347,10 @@ bool Node::isPossible(direction dir){
         || ((board[row][col] == whiteK) && (board[row + rowIncrement][col + colIncrement] == blackK) ) 
         || ((board[row][col] == blackK) && (board[row + rowIncrement][col + colIncrement] == whiteK) ) )
     {
-        std::cout << "is not possible: {" << row << ", " << col << "} dir: " << dir << std::endl; 
+        //std::cout << "is not possible: {" << row << ", " << col << "} dir: " << dir << std::endl; 
         return false;
     } else {
-        std::cout << "is possible: {" << row << ", " << col << "} dir: " << dir << std::endl;
+        //std::cout << "is possible: {" << row << ", " << col << "} dir: " << dir << std::endl;
         return true;
     }
 }
@@ -364,12 +364,10 @@ Node Node::partialExpansion(direction dir){
     if (playerInTurn == whitesTurn){
         origin[0] = wKnightPos[0];
         origin[1] = wKnightPos[1];
-        //std::cout << "origin: {" << origin[0] << ", " << origin[1] << "}" << std::endl; 
         sonsWhitePoints += board[origin[0] + rowIncrement] [origin[1] + colIncrement];
     }else{
         origin[0] = bKnightPos[0];
         origin[1] = bKnightPos[1];
-        //std::cout << "origin: {" << origin[0] << ", " << origin[1] << "}" << std::endl;
         sonsBlackPoints += board[origin[0] + rowIncrement] [origin[1] + colIncrement];
     }
 
@@ -396,6 +394,9 @@ Node Node::partialExpansion(direction dir){
     return nod;
 }
 
+void Node::resetErrorMsgs(){
+    errorMsgs = "";
+}
 
 int Node::leafUtility(){
     int utility;
@@ -409,20 +410,24 @@ int Node::leafUtility(){
 
 
 void Node::receiveOpponentsUtility(int opUt, Node* son){
+    //std::cout << "receiveOpponentsUtility( " << opUt << ", " << son->getId() << ")" << std::endl;
+
+    //son->printBoard();
+
     int ut = -opUt;
     if (receivedUtilities == 0){
         max = ut;
         favoriteSon = son;
-    }else{
-        if (ut > max){
-            max = ut;
-            favoriteSon = son;
-        }
+    }else if (ut > max){
+        max = ut;
+        favoriteSon = son;
     }
     receivedUtilities++;
 
     if ( (receivedUtilities == offspring) && (offspring > 0) ){
-        this->getFather()->receiveOpponentsUtility( this->leafUtility(), this );
+        //this->getFather()->receiveOpponentsUtility( this->leafUtility(), this );
+        if (this->getFather() != nullptr)
+            this->getFather()->receiveOpponentsUtility( max, this );
     }else if (offspring == 0){
         errorMsgs += "ERROR. receiveOpponentsUtility invoked from a Node with no offspring. id = " + id;
     } else if (receivedUtilities > offspring){

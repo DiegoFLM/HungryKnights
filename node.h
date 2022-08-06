@@ -51,8 +51,7 @@ class Node {
         static const int initialGrassAmount = 14;
         static const int initialFlowersAmount = 5;
         static const int initialApplesAmount = 2;
-        static int rowIncrement;
-        static int colIncrement;
+        
         static std::string errorMsgs;
         static int biggestId;
         
@@ -65,6 +64,8 @@ class Node {
         int wPoints;
         int bPoints;
         int remainingFood;
+        int rowIncrement;
+        int colIncrement;
 
         int depth;
         direction motherOp;
@@ -107,15 +108,17 @@ class Node {
         int getBPoints();
         int getSquareVal(int row, int col);
         
-        bool isPossible(/*int initPos[2], */direction dir);
+        bool isPossible(direction dir);
         Node partialExpansion(direction dir);
+
+        void resetErrorMsgs();
         
         //minMax
         int leafUtility();
-        int estimatedUtility();/*int offspring; //How many nodes have it as their father.
-        int receivedUtilities; revisar que sean iguales:*/
+        int estimatedUtility();//int offspring; //How many nodes have it as their father.
         void receiveOpponentsUtility(int ut, Node* son);
         int getMax();
+        
         
         
         

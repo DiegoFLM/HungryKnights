@@ -3,15 +3,6 @@
 
 
 Handler::Handler(){ 
-    //std::list <Node> nodeRegistry;
-    
-    Node nod0 = Node();
-    nodeRegistry.push_back( nod0 );
-    history.push_back(&nodeRegistry.back());
-    //l.push_back(&nodeRegistry.front());
-    //currentRoot = & nodeRegistry.back();
-
-    victory = false;
     numberOfExpansions = 0;
     gameInProgress = true;
 }
@@ -21,25 +12,36 @@ void Handler::expandNode(Node* expandingNode){
     numberOfExpansions++;
 
     if (expandingNode->getRemainingFood() == 0){ //someone won
+        //std::cout << "Handler::expandNode(), line: 23" << std::endl;
         expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
-            return;
+        l.remove(expandingNode);    
+        return;
     }
 
-    for (int integerDir = NNE; integerDir <= NNW;  integerDir++){
-        if( (expandingNode->getDepth() - history.back()->getDepth() ) < mode ){
+    if( (expandingNode->getDepth() - history.back()->getDepth() ) < mode ){
+        for (int integerDir = NNE; integerDir <= NNW;  integerDir++){
             if ( expandingNode->isPossible((direction)integerDir) ){
                 nodeRegistry.push_back( expandingNode->partialExpansion( (direction)integerDir ) );
                 l.push_back(& nodeRegistry.back());
             }
-        } else {
-            expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
         }
+    } else {
+        //std::cout << "Handler::expandNode(), line: 36" << std::endl;
+        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
     }
+    
     l.remove(expandingNode);
 }
 
 void Handler::expandFirstL(){
     this->expandNode(l.front());
+}
+
+void Handler::printCurrentPosition(){
+    std::cout << std::endl << "printCurrentPositions()" << std::endl;
+    history.back()->printBoard();
+    std::cout << "White points: " << history.back()->getWPoints() << std::endl;
+    std::cout << "Black points: " << history.back()->getBPoints() << std::endl;
 }
 
 
@@ -84,7 +86,7 @@ Node* Handler::getNodeRegistryFront(){
 }
 
 
-direction Handler::minimax(){ //This method applies minimax and changes the value of Handler::mode
+direction Handler::minimax(){ //This method applies minimax and introduces the best play into Handler::history.
     l.clear();
     if ( history.back()->getPlayerInTurn() == whitesTurn ){
         if ( history.back()->getRemainingFood() > 0) {
@@ -101,13 +103,11 @@ direction Handler::minimax(){ //This method applies minimax and changes the valu
         return (direction)-1;
     }
     direction chosenDir = history.back()->getFavoriteSon()->getMotherOp();
+    nodeRegistry.push_back( history.back()->partialExpansion(chosenDir) );
+    history.push_back( &nodeRegistry.back() );
     return chosenDir;
 }
 
-
-void Handler::setMode(difficulty mod){
-    mode = mod;
-}
 
 Node* Handler::getLastPlay(){
     return history.back();
@@ -124,12 +124,59 @@ void Handler::blackPlay(direction dir){
         nodeRegistry.back().sendAlert("Error: impossible black play in Handler::blackPlay(" 
             + std::to_string(dir) + ")\n");
     }
+}
+
+
+void Handler::newGame(difficulty mod){
+    //reset
+    mode = mod;
+    nodeRegistry.clear();
+    history.clear();
+    l.clear();
+    numberOfExpansions = 0;
+    chosenPlay = (direction) -1;
+    gameInProgress = true;
+
+
+    Node nod0 = Node();
+    nod0.resetErrorMsgs();
+    nodeRegistry.push_back( nod0 );
+    history.push_back(&nodeRegistry.back());
+    std::cout << "Starting position: " << std::endl;
+    printCurrentPosition();
+
     
-    //currentRoot = history.back();
+    //match
+    while (gameInProgress){
+        minimax();
+        printCurrentPosition();
+        if (!gameInProgress) break;
+                
+        int userPlay;
+        std::cout << "Your turn: " << std::endl;
+        std::cin >> userPlay;
+        direction blacksMove = (direction)userPlay;
+        blackPlay(blacksMove);
+        printCurrentPosition();
+    }
+    std::cout << "GAME OVER. WINNER: ";
+    if (history.back()->getWPoints() > history.back()->getBPoints()){
+        std::cout << "WHITE." << std::endl;
+    }else{
+        std::cout << "BLACK." << std::endl;
+    }
+    std::cout << "White points: " << history.back()->getWPoints() << std::endl;
+    std::cout << "Black points: " << history.back()->getBPoints() << std::endl;
 }
 
 
 
+
+
+
+void Handler::showAlerts(){
+    nodeRegistry.front().showAlerts();
+}
 
 
 
