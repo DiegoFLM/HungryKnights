@@ -50,7 +50,12 @@ class Handler{
         Node* getLastPlay();
         void blackPlay(direction dir);
         
-        void newGame(difficulty mod);
+        void newGameConsole(difficulty mod);
+        void newGameGUI(difficulty mod);
+        void userMove(int destiny[2]);
+        void blackPlayGUI(direction dir);
+        void whitePlayGUI();
+        void endGameGUI();
         
 
         void showAlerts();

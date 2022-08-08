@@ -292,8 +292,7 @@ bool Node::isPossible(direction dir){
     }
 
 
-    switch (dir)
-    {
+    switch (dir){
     case NNE:
         rowIncrement = -2;
         colIncrement = 1;

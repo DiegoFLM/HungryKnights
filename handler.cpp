@@ -132,7 +132,7 @@ void Handler::blackPlay(direction dir){
 }
 
 
-void Handler::newGame(difficulty mod){
+void Handler::newGameConsole(difficulty mod){
     //reset
     mode = mod;
     nodeRegistry.clear();
@@ -179,14 +179,120 @@ void Handler::newGame(difficulty mod){
     std::cout << "Black points: " << history.back()->getBPoints() << std::endl;
 }
 
+void Handler::newGameGUI(difficulty mod){
+    mode = mod;
+    nodeRegistry.clear();
+    history.clear();
+    l.clear();
+    numberOfExpansions = 0;
+    chosenPlay = (direction) -1;
+    gameInProgress = true;
 
 
+    Node* nod0 = new Node();
+    nod0->resetErrorMsgs();
+    nodeRegistry.push_back( *nod0 );
+    history.push_back(&nodeRegistry.back());
+    std::cout << "Starting position: " << std::endl;
+    printCurrentPosition();
 
+    whitePlayGUI();
+}
+
+void Handler::whitePlayGUI(){
+    minimax();
+    printCurrentPosition();
+    std::cout << "Your turn: " << std::endl;
+    if ( !gameInProgress ){
+        endGameGUI();
+    }
+}
+
+void Handler::userMove(int destiny[2]){ // with Black Knight
+    if( (history.back()->getPlayerInTurn() == blacksTurn) || (!gameInProgress) ){
+        return;
+    }
+
+    direction chosenDir;
+    int rowIncrement = destiny[0] - history.back()->getBRow();
+    int colIncrement = destiny[1] - history.back()->getBCol();
+
+    switch (rowIncrement){
+        case -2:
+            switch(colIncrement){
+                case -1:
+                    chosenDir = NNW;
+                case 1:
+                    chosenDir = NNE;
+                default:
+                    return;
+            }
+            break;
+        
+        case -1:
+            switch(colIncrement){
+                case -2:
+                    chosenDir = NWW;
+                case 2:
+                    chosenDir = NEE;
+                default:
+                    return;
+            }
+            break;
+        
+        case 1:
+            switch(colIncrement){
+                case -2:
+                    chosenDir = SWW;
+                case 2:
+                    chosenDir = SEE;
+                default:
+                    return;
+            }
+            break;
+        
+        case 2:
+            switch(colIncrement){
+                case -1:
+                    chosenDir = SSW;
+                case 1:
+                    chosenDir = SSE;
+                default:
+                    return;
+            }
+
+        default:
+            return;
+    }
+    blackPlayGUI(chosenDir);
+}
+
+void Handler::blackPlayGUI(direction dir){
+    blackPlay(dir);
+    if (!gameInProgress){
+        endGameGUI;
+    } else {
+        whitePlayGUI();
+    }
+}
+
+void Handler::endGameGUI(){
+    std::cout << "GAME OVER. WINNER: ";
+    if (history.back()->getWPoints() > history.back()->getBPoints()){
+        std::cout << "WHITE." << std::endl;
+    }else{
+        std::cout << "BLACK." << std::endl;
+    }
+    std::cout << "White points: " << history.back()->getWPoints() << std::endl;
+    std::cout << "Black points: " << history.back()->getBPoints() << std::endl;
+}
 
 
 void Handler::showAlerts(){
     nodeRegistry.front().showAlerts();
 }
+
+
 
 
 
