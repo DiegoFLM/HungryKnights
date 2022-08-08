@@ -160,6 +160,11 @@ void Handler::newGame(difficulty mod){
         int userPlay;
         std::cout << "Your turn: " << std::endl;
         std::cin >> userPlay;
+        while(!history.back()->isPossible((direction)userPlay)){
+            std::cout << "Please make a valid play: " << std::endl;
+            std::cin >> userPlay;
+        }
+        
         direction blacksMove = (direction)userPlay;
         blackPlay(blacksMove);
         printCurrentPosition();
