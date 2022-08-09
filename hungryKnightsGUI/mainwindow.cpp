@@ -3,6 +3,7 @@
 
 #include "/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/node.h"
 #include "/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/handler.h"
+#include "clickable_qlabel.h""
 
 QLabel* labelsList[8][8];
 
@@ -13,7 +14,10 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
 
-    labelsList[0][0] = ui->label;
+
+
+
+    labelsList[0][0] = ui->label_1;
     labelsList[0][1] = ui->label_2;
     labelsList[0][2] = ui->label_3;
     labelsList[0][3] = ui->label_4;
@@ -95,9 +99,16 @@ MainWindow::MainWindow(QWidget *parent)
 
         }
     }
-    labelsList[4][3]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
+
+    for (int r = 0; r < 8; r++){
+        for (int c = 0; c < 8; c++){
+            connect(labelsList[r][c], SIGNAL(Mouse_Pressed()), this, SLOT(Mouse_Pressed()));
+        }
+    }
+
+
+    //labelsList[4][3]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
     ui->sign->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/inTurnSign.png"));
-    ui->pushButton->setIcon(QIcon (QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkws.png")) );
 }
 
 
@@ -110,6 +121,26 @@ MainWindow::~MainWindow()
 void MainWindow::on_pushButton_clicked()
 {
     ui->label_11->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
+}
+
+
+
+void MainWindow::Mouse_Pressed()
+{
+    //ui->pieceInTurn->setText(this->sender()->objectName());
+    ui->pieceInTurn->setText("label_" + QString::number(1));
+    /*if (this->sender()->objectName() == "label_" + QString::number(1)){ //QString::fromStdString("label_") + QString::number(1)){
+        ui->label_64->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
+    } else if (this->sender()->objectName() == "label_" + QString::number(2)){
+        labelsList[7][6]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
+    }*/
+    for (int r = 0; r < 8; r++){
+        for (int c = 0; c < 8; c++){
+            if (this->sender()->objectName() == "label_" + QString::number(8*r + c + 1)){ //QString::fromStdString("label_") + QString::number(1)){
+                labelsList[r][c]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
+            }
+        }
+    }
 }
 
 

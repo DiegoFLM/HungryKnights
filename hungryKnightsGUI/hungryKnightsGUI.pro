@@ -11,12 +11,14 @@ CONFIG += c++17
 SOURCES += \
     ../handler.cpp \
     ../node.cpp \
+    clickable_qlabel.cpp \
     main.cpp \
     mainwindow.cpp
 
 HEADERS += \
     ../handler.h \
     ../node.h \
+    clickable_qlabel.h \
     mainwindow.h
 
 FORMS += \
