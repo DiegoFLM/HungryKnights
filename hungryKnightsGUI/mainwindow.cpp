@@ -3,9 +3,27 @@
 
 #include "/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/node.h"
 #include "/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/handler.h"
-#include "clickable_qlabel.h""
+#include "clickable_qlabel.h"
 
 QLabel* labelsList[8][8];
+QString appleBS="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/appleBS.png";
+QString appleWS="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/appleWS.png";
+QString bkbs="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/bkbs.png";
+QString bkws="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/bkws.png";
+QString bs="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/bs.png";
+QString flowerBS="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/flowerBS.png";
+QString flowerWS="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/flowerWS.png";
+QString grassBS="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/grassBS.png";
+QString grassWS="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/grassWS.png";
+QString inTurnSign="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/inTurnSign.png";
+QString warningBS="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/warningBS.png";
+QString warningWS="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/warningWS.png";
+QString winner="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/winner.png";
+QString wkbs="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png";
+QString wkws="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkws.png";
+QString ws="/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/ws.png";
+
+Handler hand = Handler();
 
 
 MainWindow::MainWindow(QWidget *parent)
@@ -92,9 +110,9 @@ MainWindow::MainWindow(QWidget *parent)
     for (int r=0; r < 8; r++){
         for (int c = 0; c < 8; c++){
             if ((r+ c)%2 == 0){
-                labelsList[r][c]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/ws.png"));
+                labelsList[r][c]->setPixmap(QPixmap(ws));
             }else{
-                labelsList[r][c]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/bs.png"));
+                labelsList[r][c]->setPixmap(QPixmap(bs));
             }
 
         }
@@ -108,7 +126,7 @@ MainWindow::MainWindow(QWidget *parent)
 
 
     //labelsList[4][3]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
-    ui->sign->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/inTurnSign.png"));
+    ui->sign->setPixmap(QPixmap(inTurnSign));
 }
 
 
@@ -117,30 +135,133 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+void MainWindow::refresh(){
+    Node* lastPlay;
+    lastPlay = hand.getLastPlay();
 
-void MainWindow::on_pushButton_clicked()
+    if ( lastPlay->getPlayerInTurn() == whitesTurn ){
+        ui->pieceInTurn->setPixmap(QPixmap(wkws));
+    } else {
+        ui->pieceInTurn->setPixmap(QPixmap(bkws));
+    }
+
+    for (int r = 0; r < 8; r++){
+        for (int c = 0; c < 8; c++){
+            int squareVal = lastPlay->getSquareVal(r, c);
+            switch (squareVal){
+                case freeSquare:
+                    if ( (r + c) % 2 == 0 ){
+                        labelsList[r][c]->setPixmap(QPixmap(ws));
+                    }else {
+                        labelsList[r][c]->setPixmap(QPixmap(bs));
+                    }
+                    break;
+
+                case grass:
+                    if ( (r + c) % 2 == 0 ){
+                        labelsList[r][c]->setPixmap(QPixmap(grassWS));
+                    }else {
+                        labelsList[r][c]->setPixmap(QPixmap(grassBS));
+                    }
+                    break;
+
+                case flower:
+                    if ( (r + c) % 2 == 0 ){
+                        labelsList[r][c]->setPixmap(QPixmap(flowerWS));
+                    }else {
+                        labelsList[r][c]->setPixmap(QPixmap(flowerBS));
+                    }
+                    break;
+
+                case apple:
+                    if ( (r + c) % 2 == 0 ){
+                        labelsList[r][c]->setPixmap(QPixmap(appleWS));
+                    }else {
+                        labelsList[r][c]->setPixmap(QPixmap(appleBS));
+                    }
+                    break;
+
+                case whiteK:
+                    if ( (r + c) % 2 == 0 ){
+                        labelsList[r][c]->setPixmap(QPixmap(wkws));
+                    }else {
+                        labelsList[r][c]->setPixmap(QPixmap(wkbs));
+                    }
+                    break;
+
+                case blackK:
+                    if ( (r + c) % 2 == 0 ){
+                        labelsList[r][c]->setPixmap(QPixmap(bkws));
+                    }else {
+                        labelsList[r][c]->setPixmap(QPixmap(bkbs));
+                    }
+                    break;
+
+                default:
+                    if ( (r + c) % 2 == 0 ){
+                        labelsList[r][c]->setPixmap(QPixmap(warningWS));
+                    }else {
+                        labelsList[r][c]->setPixmap(QPixmap(warningBS));
+                    }
+            }
+        }
+    }
+
+    if ( !hand.getGameInProgress() ){
+        ui->sign->setPixmap(QPixmap(winner));
+        if(lastPlay->getWPoints() > lastPlay->getBPoints()){
+            ui->pieceInTurn->setPixmap(QPixmap(wkws));
+        }else{
+            ui->pieceInTurn->setPixmap(QPixmap(bkws));
+        }
+        return;
+    } else {
+        ui->sign->setPixmap(QPixmap(inTurnSign));
+    }
+}
+
+void MainWindow::on_pushButton_clicked() // New Game
 {
-    ui->label_11->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
+
+    if (ui->radioButtonNovice->isChecked()){ //Breadth First Search
+            hand.newGameGUI(novice);
+        } else if (ui->radioButtonAmateur->isChecked()){ //Uniform Cost Search
+            hand.newGameGUI(amateur);
+        } else if (ui->radioButtonExpert->isChecked()){ //Depth First Search
+            hand.newGameGUI(expert);
+        }
+    refresh();
 }
 
 
 
 void MainWindow::Mouse_Pressed()
 {
-    //ui->pieceInTurn->setText(this->sender()->objectName());
-    ui->pieceInTurn->setText("label_" + QString::number(1));
-    /*if (this->sender()->objectName() == "label_" + QString::number(1)){ //QString::fromStdString("label_") + QString::number(1)){
-        ui->label_64->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
-    } else if (this->sender()->objectName() == "label_" + QString::number(2)){
-        labelsList[7][6]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
-    }*/
     for (int r = 0; r < 8; r++){
         for (int c = 0; c < 8; c++){
             if (this->sender()->objectName() == "label_" + QString::number(8*r + c + 1)){ //QString::fromStdString("label_") + QString::number(1)){
-                labelsList[r][c]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
+                //labelsList[r][c]->setPixmap(QPixmap(wkbs));
+                int destiny[2] = {r, c};
+
+                //if ( hand.isPossible(destiny) ){
+
+                //}
+
+                if (hand.userMove(destiny)){
+                    if (!hand.getGameInProgress()){
+                        hand.endGameGUI();
+                        std::cout << "game ended" << std::endl;
+                    } else {
+                        //ui->pieceInTurn->setPixmap(QPixmap(wkws));
+                        refresh();
+                    }
+                    ui->pieceInTurn->setPixmap(QPixmap(wkws));
+                    hand.whitePlayGUI();
+                }
             }
         }
     }
+    refresh();
 }
 
 

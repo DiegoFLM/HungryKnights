@@ -441,11 +441,13 @@ void Node::receiveOpponentsUtility(int opUt, Node* son){
 }
 
 int Node::getMax(){
-    if(receivedUtilities != offspring){
+    /*if(receivedUtilities != offspring){
         errorMsgs += "WARNING: receivedUtilities != offspring in Node::getMax()";
         errorMsgs += "id = " + id;
-    }
+    }*/
     return max;
 }
 
-
+void Node::knowYourSon(Node* son){
+    offspringList.push_back(son);
+}

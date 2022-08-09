@@ -12,7 +12,6 @@ void Handler::expandNode(Node* expandingNode){
     numberOfExpansions++;
 
     if (expandingNode->getRemainingFood() == 0){ //someone won
-        //std::cout << "Handler::expandNode(), line: 23" << std::endl;
         expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
         l.remove(expandingNode);    
         return;
@@ -26,12 +25,36 @@ void Handler::expandNode(Node* expandingNode){
             }
         }
     } else {
-        //std::cout << "Handler::expandNode(), line: 36" << std::endl;
         expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
     }
-    
     l.remove(expandingNode);
 }
+
+
+void Handler::expandNode1(Node* expandingNode){
+    numberOfExpansions++;
+
+    if (expandingNode->getRemainingFood() == 0){ //someone won
+        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
+        l.remove(expandingNode);    
+        return;
+    }
+
+    if( (expandingNode->getDepth() - history.back()->getDepth() ) < mode ){
+        for (int integerDir = NNE; integerDir <= NNW;  integerDir++){
+            if ( expandingNode->isPossible((direction)integerDir) ){
+                nodeRegistry.push_back( expandingNode->partialExpansion( (direction)integerDir ) );
+                l.push_front(& nodeRegistry.back());
+                expandingNode->knowYourSon(& nodeRegistry.back());
+            }
+        }
+    } else {
+        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
+        
+    }
+    l.remove(expandingNode);
+}
+
 
 void Handler::expandFirstL(){
     this->expandNode(l.front());
@@ -200,6 +223,10 @@ void Handler::newGameGUI(difficulty mod){
 }
 
 void Handler::whitePlayGUI(){
+    if ( !gameInProgress ){
+        endGameGUI();
+        return;
+    }
     minimax();
     printCurrentPosition();
     std::cout << "Your turn: " << std::endl;
@@ -208,24 +235,26 @@ void Handler::whitePlayGUI(){
     }
 }
 
-void Handler::userMove(int destiny[2]){ // with Black Knight
-    if( (history.back()->getPlayerInTurn() == blacksTurn) || (!gameInProgress) ){
-        return;
+//returns true if the user move is a valid play.
+bool Handler::userMove(int destiny[2]){ // with Black Knight
+    
+    if( (history.back()->getPlayerInTurn() == whitesTurn) || (!gameInProgress) ){
+        return false;
     }
-
     direction chosenDir;
     int rowIncrement = destiny[0] - history.back()->getBRow();
     int colIncrement = destiny[1] - history.back()->getBCol();
-
     switch (rowIncrement){
         case -2:
             switch(colIncrement){
                 case -1:
                     chosenDir = NNW;
+                    break;
                 case 1:
                     chosenDir = NNE;
+                    break;
                 default:
-                    return;
+                    return false;
             }
             break;
         
@@ -233,10 +262,12 @@ void Handler::userMove(int destiny[2]){ // with Black Knight
             switch(colIncrement){
                 case -2:
                     chosenDir = NWW;
+                    break;
                 case 2:
                     chosenDir = NEE;
+                    break;
                 default:
-                    return;
+                    return false;
             }
             break;
         
@@ -244,10 +275,12 @@ void Handler::userMove(int destiny[2]){ // with Black Knight
             switch(colIncrement){
                 case -2:
                     chosenDir = SWW;
+                    break;
                 case 2:
                     chosenDir = SEE;
+                    break;
                 default:
-                    return;
+                    return false;
             }
             break;
         
@@ -255,18 +288,29 @@ void Handler::userMove(int destiny[2]){ // with Black Knight
             switch(colIncrement){
                 case -1:
                     chosenDir = SSW;
+                    break;
                 case 1:
                     chosenDir = SSE;
+                    break;
                 default:
-                    return;
+                    return false;
             }
+            break;
 
         default:
-            return;
+            return false;
     }
-    blackPlayGUI(chosenDir);
+    std::cout << "268: chosenDir: " << chosenDir << std::endl;
+    
+    //blackPlayGUI(chosenDir);
+    blackPlay(chosenDir);
+    if (!gameInProgress){
+        endGameGUI();
+    }
+    return true;
 }
 
+//not used right now
 void Handler::blackPlayGUI(direction dir){
     blackPlay(dir);
     if (!gameInProgress){
@@ -293,6 +337,77 @@ bool Handler::getGameInProgress(){
 
 turn Handler::getTurn(){
     return history.back()->getPlayerInTurn();
+}
+
+bool Handler::isPossible(int destiny[2]){
+    if( (history.back()->getPlayerInTurn() == whitesTurn) || (!gameInProgress) ){
+        return false; 
+    }
+    direction chosenDir;
+    int rowIncrement = destiny[0] - history.back()->getBRow();
+    int colIncrement = destiny[1] - history.back()->getBCol();
+    switch (rowIncrement){
+        case -2:
+            switch(colIncrement){
+                case -1:
+                    chosenDir = NNW;
+                    break;
+                case 1:
+                    chosenDir = NNE;
+                    break;
+                default:
+                    return false;
+            }
+            break;
+        
+        case -1:
+            switch(colIncrement){
+                case -2:
+                    chosenDir = NWW;
+                    break;
+                case 2:
+                    chosenDir = NEE;
+                    break;
+                default:
+                    return false;
+            }
+            break;
+        
+        case 1:
+            switch(colIncrement){
+                case -2:
+                    chosenDir = SWW;
+                    break;
+                case 2:
+                    chosenDir = SEE;
+                    break;
+                default:
+                    return false;
+            }
+            break;
+        
+        case 2:
+            switch(colIncrement){
+                case -1:
+                    chosenDir = SSW;
+                    break;
+                case 1:
+                    chosenDir = SSE;
+                    break;
+                default:
+                    return false;
+            }
+            break;
+
+        default:
+            return false;
+    }
+    if (history.back()->isPossible(chosenDir)){
+        return true;
+    } else {
+        return false;
+    }
+
 }
 
 void Handler::showAlerts(){

@@ -35,6 +35,7 @@ class Handler{
     public:
         Handler();
         void expandNode(Node* expandingNode);
+        void expandNode1(Node* expandingNode);
         void expandFirstL();
         void printCurrentPosition();
         void printNodeRegistry();
@@ -52,12 +53,13 @@ class Handler{
         
         void newGameConsole(difficulty mod);
         void newGameGUI(difficulty mod);
-        void userMove(int destiny[2]);
+        bool userMove(int destiny[2]);
         void blackPlayGUI(direction dir);
         void whitePlayGUI();
         void endGameGUI();
         bool getGameInProgress();
         turn getTurn();
+        bool isPossible(int destiny[2]);
 
         void showAlerts();
 

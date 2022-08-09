@@ -40,6 +40,9 @@ DISTFILES += \
     grassBS.png \
     grassWS.png \
     inTurnSign.png \
+    warningBS.png \
+    warningWS.png \
+    winner.png \
     wkBs.png \
     wkbs.png \
     wkws.png \

@@ -9,6 +9,8 @@ email: diego.ledesma@correounivalle.edu.co
 #include <string>
 #include <random>
 #include <ctime>
+#include <iterator>
+#include <list>
 
 //#include "alert.h"
 
@@ -76,6 +78,9 @@ class Node {
         int receivedUtilities; //Cuántos nodos hijos le han reportado su utilidad.
         int max;
         Node* favoriteSon;
+        //pruning
+        std::list <Node *> offspringList;
+
 
         //methods
         void randomBoard();
@@ -119,6 +124,9 @@ class Node {
         int estimatedUtility();//int offspring; //How many nodes have it as their father.
         void receiveOpponentsUtility(int ut, Node* son);
         int getMax();
+
+        //pruning
+        void knowYourSon(Node* son);
         
         
         
