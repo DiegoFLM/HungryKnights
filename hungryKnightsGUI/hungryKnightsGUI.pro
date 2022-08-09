@@ -37,6 +37,7 @@ DISTFILES += \
     flowerWS.png \
     grassBS.png \
     grassWS.png \
+    inTurnSign.png \
     wkBs.png \
     wkbs.png \
     wkws.png \

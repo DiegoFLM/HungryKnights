@@ -270,7 +270,7 @@ void Handler::userMove(int destiny[2]){ // with Black Knight
 void Handler::blackPlayGUI(direction dir){
     blackPlay(dir);
     if (!gameInProgress){
-        endGameGUI;
+        endGameGUI();
     } else {
         whitePlayGUI();
     }
@@ -287,6 +287,13 @@ void Handler::endGameGUI(){
     std::cout << "Black points: " << history.back()->getBPoints() << std::endl;
 }
 
+bool Handler::getGameInProgress(){
+    return gameInProgress;
+}
+
+turn Handler::getTurn(){
+    return history.back()->getPlayerInTurn();
+}
 
 void Handler::showAlerts(){
     nodeRegistry.front().showAlerts();

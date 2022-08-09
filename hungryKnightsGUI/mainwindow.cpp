@@ -96,7 +96,8 @@ MainWindow::MainWindow(QWidget *parent)
         }
     }
     labelsList[4][3]->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
-
+    ui->sign->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/inTurnSign.png"));
+    ui->pushButton->setIcon(QIcon (QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkws.png")) );
 }
 
 
@@ -108,6 +109,8 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    ui->label_11->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkws.png"));
+    ui->label_11->setPixmap(QPixmap("/home/diegoflm/Documents/VU/IngSistemas/MateriasYTemas/Semestre6/AI/project2/p2Code/hungryKnightsGUI/wkbs.png"));
 }
+
+
 

@@ -56,7 +56,8 @@ class Handler{
         void blackPlayGUI(direction dir);
         void whitePlayGUI();
         void endGameGUI();
-        
+        bool getGameInProgress();
+        turn getTurn();
 
         void showAlerts();
 
