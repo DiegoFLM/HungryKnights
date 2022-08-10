@@ -74,12 +74,14 @@ class Node {
         direction motherOp;
 
         //minMax
-        int offspring; //Cuántos nodos lo tienen como padre
-        int receivedUtilities; //Cuántos nodos hijos le han reportado su utilidad.
+        int offspring; //How many nodes have this one as father.
+        int receivedUtilities; //How many child nodes have reported their utility.
         int max;
         Node* favoriteSon;
         //pruning
-        std::list <Node *> offspringList;
+        std::list <Node *> offspringInL;
+        bool beenInformed;
+        bool mustBePruned;
 
 
         //methods
@@ -120,17 +122,21 @@ class Node {
         void resetErrorMsgs();
         
         //minMax
-        int leafUtility();
-        int estimatedUtility();//int offspring; //How many nodes have it as their father.
+        int getFlatUtility();
+        int estimatedUtility();
         void receiveOpponentsUtility(int ut, Node* son);
         int getMax();
 
         //pruning
-        void knowYourSon(Node* son);
-        
-        
-        
-        
+        void addSon(Node* son);
+        void dropSon(Node* son);
+        Node* getFrontSon();
+        bool getBeenInformed();
+        bool getMustBePruned();
+        void setMustBePruned(); //Prunes all descendence in L, not just sons.
+        void checkForBranchPruning();
+        void checkForLeafPruning();
+        int h();
 };
 
 #else

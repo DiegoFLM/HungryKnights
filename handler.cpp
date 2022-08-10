@@ -12,7 +12,7 @@ void Handler::expandNode(Node* expandingNode){
     numberOfExpansions++;
 
     if (expandingNode->getRemainingFood() == 0){ //someone won
-        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
+        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->getFlatUtility(), expandingNode );
         l.remove(expandingNode);    
         return;
     }
@@ -25,17 +25,24 @@ void Handler::expandNode(Node* expandingNode){
             }
         }
     } else {
-        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
+        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->getFlatUtility(), expandingNode );
     }
     l.remove(expandingNode);
 }
 
-
+//This method does pruning.
 void Handler::expandNode1(Node* expandingNode){
     numberOfExpansions++;
 
+    if (expandingNode->getMustBePruned()){
+        //expandingNode->getFather()->dropSon(expandingNode);
+        l.remove(expandingNode);    
+        return;
+    }
+
     if (expandingNode->getRemainingFood() == 0){ //someone won
-        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
+        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->getFlatUtility(), expandingNode );
+        //expandingNode->getFather()->dropSon(expandingNode);
         l.remove(expandingNode);    
         return;
     }
@@ -45,15 +52,17 @@ void Handler::expandNode1(Node* expandingNode){
             if ( expandingNode->isPossible((direction)integerDir) ){
                 nodeRegistry.push_back( expandingNode->partialExpansion( (direction)integerDir ) );
                 l.push_front(& nodeRegistry.back());
-                expandingNode->knowYourSon(& nodeRegistry.back());
+                expandingNode->addSon(& nodeRegistry.back());
             }
         }
     } else {
-        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->leafUtility(), expandingNode );
-        
+        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->h(), expandingNode );
+        expandingNode->checkForLeafPruning();
     }
+    //expandingNode->getFather()->dropSon(expandingNode);
     l.remove(expandingNode);
 }
+
 
 
 void Handler::expandFirstL(){
@@ -82,7 +91,7 @@ void Handler::printNodeRegistry(){
 }
 
        
-void Handler::printL(){
+/*void Handler::printL(){
     std::cout << std::endl << "printL():" << std::endl;
     std::cout << "l.size():" << l.size() << std::endl;
     std::list<Node *>::iterator it;
@@ -94,7 +103,7 @@ void Handler::printL(){
         (*it)->printBoard();
     }
     
-}
+}*/
 
 difficulty Handler::getMode(){
     return mode;

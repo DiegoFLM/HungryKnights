@@ -39,7 +39,7 @@ class Handler{
         void expandFirstL();
         void printCurrentPosition();
         void printNodeRegistry();
-        void printL();
+        //void printL();
         
         difficulty getMode();
         Node* getNodeRegistryBack();

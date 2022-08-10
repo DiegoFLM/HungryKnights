@@ -25,6 +25,8 @@ Node::Node(){
 
     offspring = 0;
     receivedUtilities = 0;
+    beenInformed = false;
+    mustBePruned = false;
 
     testInitialSet();
 }
@@ -33,6 +35,8 @@ Node::Node(Node* dad, int newBoard[N][N], int whitePoints, int blackPoints, dire
     id = biggestId + 1;
     biggestId = id;
     father = dad;
+    beenInformed = false;
+    mustBePruned = false;
 
     int remFood = 0;
     for (int row = 0; row < N; row++){
@@ -402,7 +406,7 @@ void Node::resetErrorMsgs(){
     errorMsgs = "";
 }
 
-int Node::leafUtility(){
+int Node::getFlatUtility(){
     int utility;
     if (playerInTurn == whitesTurn){
         utility = wPoints - bPoints;
@@ -414,10 +418,7 @@ int Node::leafUtility(){
 
 
 void Node::receiveOpponentsUtility(int opUt, Node* son){
-    //std::cout << "receiveOpponentsUtility( " << opUt << ", " << son->getId() << ")" << std::endl;
-
-    //son->printBoard();
-
+    beenInformed = true;
     int ut = -opUt;
     if (receivedUtilities == 0){
         max = ut;
@@ -428,26 +429,143 @@ void Node::receiveOpponentsUtility(int opUt, Node* son){
     }
     receivedUtilities++;
 
-    if ( (receivedUtilities == offspring) && (offspring > 0) ){
-        //this->getFather()->receiveOpponentsUtility( this->leafUtility(), this );
+    this->checkForBranchPruning();
+
+    if ( (receivedUtilities >= 1/*offspringInL.size()*/) && (offspring > 0) ){
         if (this->getFather() != nullptr)
             this->getFather()->receiveOpponentsUtility( max, this );
-    }else if (offspring == 0){
+    }
+    
+    
+    /*else if (offspring == 0){
         errorMsgs += "ERROR. receiveOpponentsUtility invoked from a Node with no offspring. id = " + id;
     } else if (receivedUtilities > offspring){
         std::cout << "last receiveOpponentsUtility for id = " << id << std::endl;
-    }
-
+    }*/
 }
 
 int Node::getMax(){
-    /*if(receivedUtilities != offspring){
-        errorMsgs += "WARNING: receivedUtilities != offspring in Node::getMax()";
-        errorMsgs += "id = " + id;
-    }*/
     return max;
 }
 
-void Node::knowYourSon(Node* son){
-    offspringList.push_back(son);
+void Node::addSon(Node* son){
+    offspringInL.push_back(son);
 }
+
+void Node::dropSon(Node* son){
+    offspringInL.remove(son);
+}
+
+Node* Node::getFrontSon(){
+    return offspringInL.front();
+}
+
+bool Node::getBeenInformed(){
+    return beenInformed;
+}
+
+bool Node::getMustBePruned(){
+    return mustBePruned;
+}
+
+//Prunes all descendence in L, not just sons.
+void Node::setMustBePruned(){
+    mustBePruned = true;
+    if (offspringInL.size() == 0){
+        return;
+    } else {
+        std::list<Node *>::iterator it;
+        for (it = offspringInL.begin(); it != offspringInL.end(); ++it){
+            (*it)->setMustBePruned();
+        }
+        offspringInL.clear();
+    }
+}
+
+void Node::checkForBranchPruning(){
+    if (this->getFather() != nullptr){
+        if (this->getFather()->getFather() != nullptr){
+            if ( (receivedUtilities >= offspring) && this->getFather()->getFather()->getBeenInformed() 
+                && (this->getMax() <= this->getFather()->getFather()->getMax() ) ){
+                this->getFather()->setMustBePruned();
+            }
+        }
+    }
+}
+
+void Node::checkForLeafPruning(){
+    if (this->getFather() != nullptr) {
+        if (this->getFather()->getFather() != nullptr){
+            if ( this->getFather()->getFather()->getBeenInformed() 
+                && (this->h() <= this->getFather()->getFather()->getMax() ) ){
+                this->getFather()->setMustBePruned();
+            } 
+        }   
+    }
+}
+
+
+int Node::h(){
+    int rowIncrement;
+    int colIncrement;
+    items maxItem = grass;
+
+    for (direction dir = NNE; dir < 8; dir = (direction)(dir + 1)){
+        switch (dir){
+            case NNE:
+                rowIncrement = -2;
+                colIncrement = 1;
+                break;
+
+            case NEE:
+                rowIncrement = -1;
+                colIncrement = 2;
+                break;
+
+            case SEE:
+                rowIncrement = 1;
+                colIncrement = 2;
+                break;
+
+            case SSE:
+                rowIncrement = 2;
+                colIncrement = 1;
+                break;
+
+            case SSW:
+                rowIncrement = 2;
+                colIncrement = -1;
+                break;
+
+            case SWW:
+                rowIncrement = 1;
+                colIncrement = -2;
+                break;
+
+            case NWW:
+                rowIncrement = -1;
+                colIncrement = -2;
+                break;
+
+            case NNW:
+                rowIncrement = -2;
+                colIncrement = -1;
+                break;
+            
+            default:
+                return 0;
+        }
+        if (isPossible(dir)){
+            if (board[ wKnightPos[0]+rowIncrement ][wKnightPos[1] + colIncrement] > maxItem){
+                maxItem = (items)board[ wKnightPos[0]+rowIncrement ][wKnightPos[1] + colIncrement];
+            }
+        }
+
+    }
+    int h = wPoints - bPoints + ((maxItem)/5);
+    return h;    
+}
+
+
+
+

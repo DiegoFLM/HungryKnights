@@ -34,6 +34,7 @@ DISTFILES += \
     appleWS.png \
     bkbs.png \
     bkws.png \
+    black.png \
     bs.png \
     flowerBS.png \
     flowerWS.png \
@@ -42,6 +43,7 @@ DISTFILES += \
     inTurnSign.png \
     warningBS.png \
     warningWS.png \
+    white.png \
     winner.png \
     wkBs.png \
     wkbs.png \
