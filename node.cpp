@@ -27,6 +27,7 @@ Node::Node(){
     receivedUtilities = 0;
     beenInformed = false;
     mustBePruned = false;
+    max = -40;
 
     testInitialSet();
 }
@@ -37,6 +38,7 @@ Node::Node(Node* dad, int newBoard[N][N], int whitePoints, int blackPoints, dire
     father = dad;
     beenInformed = false;
     mustBePruned = false;
+    max = -40;
 
     int remFood = 0;
     for (int row = 0; row < N; row++){
@@ -474,18 +476,20 @@ void Node::setMustBePruned(){
     if (offspringInL.size() == 0){
         return;
     } else {
-        std::list<Node *>::iterator it;
-        for (it = offspringInL.begin(); it != offspringInL.end(); ++it){
-            (*it)->setMustBePruned();
-        }
-        offspringInL.clear();
+        if (! offspringInL.empty()){
+            std::list<Node *>::iterator it;
+            for (it = offspringInL.begin(); it != offspringInL.end(); ++it){
+                (*it)->setMustBePruned();
+            }
+            offspringInL.clear();
+        }        
     }
 }
 
 void Node::checkForBranchPruning(){
     if (this->getFather() != nullptr){
         if (this->getFather()->getFather() != nullptr){
-            if ( (receivedUtilities >= offspring) && this->getFather()->getFather()->getBeenInformed() 
+            if ( (receivedUtilities >= offspringInL.size()) && this->getFather()->getFather()->getBeenInformed() 
                 && (this->getMax() <= this->getFather()->getFather()->getMax() ) ){
                 this->getFather()->setMustBePruned();
             }
@@ -497,7 +501,7 @@ void Node::checkForLeafPruning(){
     if (this->getFather() != nullptr) {
         if (this->getFather()->getFather() != nullptr){
             if ( this->getFather()->getFather()->getBeenInformed() 
-                && (this->h() <= this->getFather()->getFather()->getMax() ) ){
+                && (this->getFlatUtility() <= this->getFather()->getFather()->getMax() ) ){
                 this->getFather()->setMustBePruned();
             } 
         }   

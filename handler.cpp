@@ -56,8 +56,9 @@ void Handler::expandNode1(Node* expandingNode){
             }
         }
     } else {
-        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->h(), expandingNode );
         expandingNode->checkForLeafPruning();
+        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->getFlatUtility(), expandingNode );
+        
     }
     //expandingNode->getFather()->dropSon(expandingNode);
     l.remove(expandingNode);
@@ -123,8 +124,8 @@ direction Handler::minimax(){ //This method applies minimax and introduces the b
     if ( history.back()->getPlayerInTurn() == whitesTurn ){
         if ( history.back()->getRemainingFood() > 0) {
             l.push_back( history.back() );
-            while ( (!l.empty()) /*&& ((l.front()->getDepth() - history.back()->getDepth() ) <= mode + 1)*/ ){
-                this->expandNode( l.front() );
+            while ( (!l.empty()) ){
+                this->expandNode1( l.front() );
             }
         }else{
             gameInProgress = false;
@@ -135,9 +136,7 @@ direction Handler::minimax(){ //This method applies minimax and introduces the b
         return (direction)-1;
     }
     direction chosenDir = history.back()->getFavoriteSon()->getMotherOp();
-    //if (!history.back()->isPossible()){
 
-    //}
     nodeRegistry.push_back( history.back()->partialExpansion(chosenDir) );
     history.push_back( &nodeRegistry.back() );
     if ( history.back()->getRemainingFood() == 0 )

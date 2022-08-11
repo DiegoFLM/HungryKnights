@@ -146,8 +146,10 @@ void MainWindow::refresh(){
 
     if ( lastPlay->getPlayerInTurn() == whitesTurn ){
         ui->pieceInTurn->setPixmap(QPixmap(wkws));
+        std::cout << "WHITES TURN" << std::endl;
     } else {
         ui->pieceInTurn->setPixmap(QPixmap(bkws));
+        std::cout << "BLACKS TURN" << std::endl;
     }
 
     ui->lcdNumber->display( lastPlay->getWPoints() );
@@ -239,6 +241,7 @@ void MainWindow::on_pushButton_clicked() // New Game
             hand.newGameGUI(expert);
         }
     refresh();
+    hand.showAlerts();
 }
 
 
@@ -255,16 +258,20 @@ void MainWindow::Mouse_Pressed()
                         hand.endGameGUI();
                         std::cout << "game ended" << std::endl;
                     } else {
-                        //sui->pieceInTurn->setPixmap(QPixmap(wkws));
-                        refresh();
+                        ui->pieceInTurn->setPixmap(QPixmap(wkws));
+                        //refresh();
                     }
                     ui->pieceInTurn->setPixmap(QPixmap(wkws));
+                    refresh();
                     hand.whitePlayGUI();
+                    refresh();
+                    return;
                 }
             }
         }
     }
-    refresh();
+    //refresh();
+    hand.showAlerts();
 }
 
 
