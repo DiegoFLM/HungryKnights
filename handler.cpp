@@ -33,20 +33,17 @@ void Handler::expandNode(Node* expandingNode){
 //This method does pruning.
 void Handler::expandNode1(Node* expandingNode){
     numberOfExpansions++;
-
     if (expandingNode->getMustBePruned()){
-        //expandingNode->getFather()->dropSon(expandingNode);
+        //expandingNode->getFather()->dropSon(expandingNode); This is done in Node::setMustBePruned()
         l.remove(expandingNode);    
         return;
     }
-
     if (expandingNode->getRemainingFood() == 0){ //someone won
         expandingNode->getFather()->receiveOpponentsUtility( expandingNode->getFlatUtility(), expandingNode );
         //expandingNode->getFather()->dropSon(expandingNode);
         l.remove(expandingNode);    
         return;
     }
-
     if( (expandingNode->getDepth() - history.back()->getDepth() ) < mode ){
         for (int integerDir = NNE; integerDir <= NNW;  integerDir++){
             if ( expandingNode->isPossible((direction)integerDir) ){
@@ -139,6 +136,7 @@ direction Handler::minimax(){ //This method applies minimax and introduces the b
 
     nodeRegistry.push_back( history.back()->partialExpansion(chosenDir) );
     history.push_back( &nodeRegistry.back() );
+    history.back()->setInHistory();
     if ( history.back()->getRemainingFood() == 0 )
             gameInProgress = false;
     return chosenDir;
@@ -153,6 +151,7 @@ void Handler::blackPlay(direction dir){
     if ( history.back()->isPossible(dir) ){
         nodeRegistry.push_back( history.back()->partialExpansion(dir) );
         history.push_back( & nodeRegistry.back() );
+        history.back()->setInHistory();
         if ( history.back()->getRemainingFood() == 0 ){
             gameInProgress = false;
         }
@@ -178,6 +177,7 @@ void Handler::newGameConsole(difficulty mod){
     nod0->resetErrorMsgs();
     nodeRegistry.push_back( *nod0 );
     history.push_back(&nodeRegistry.back());
+    history.back()->setInHistory();
     std::cout << "Starting position: " << std::endl;
     printCurrentPosition();
 
@@ -224,6 +224,7 @@ void Handler::newGameGUI(difficulty mod){
     nod0->resetErrorMsgs();
     nodeRegistry.push_back( *nod0 );
     history.push_back(&nodeRegistry.back());
+    history.back()->setInHistory();
     std::cout << "Starting position: " << std::endl;
     printCurrentPosition();
 

@@ -11,6 +11,7 @@ email: diego.ledesma@correounivalle.edu.co
 #include <ctime>
 #include <iterator>
 #include <list>
+#include <algorithm>
 
 //#include "alert.h"
 
@@ -82,6 +83,7 @@ class Node {
         std::list <Node *> offspringInL;
         bool beenInformed;
         bool mustBePruned;
+        bool inHistory;
 
 
         //methods
@@ -137,6 +139,8 @@ class Node {
         void checkForBranchPruning();
         void checkForLeafPruning();
         int h();
+        void setInHistory();
+        bool getInHistory();
 };
 
 #else

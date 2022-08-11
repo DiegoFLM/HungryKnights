@@ -28,6 +28,7 @@ Node::Node(){
     beenInformed = false;
     mustBePruned = false;
     max = -40;
+    inHistory = false;
 
     testInitialSet();
 }
@@ -39,6 +40,7 @@ Node::Node(Node* dad, int newBoard[N][N], int whitePoints, int blackPoints, dire
     beenInformed = false;
     mustBePruned = false;
     max = -40;
+    inHistory = false;
 
     int remFood = 0;
     for (int row = 0; row < N; row++){
@@ -433,12 +435,10 @@ void Node::receiveOpponentsUtility(int opUt, Node* son){
 
     this->checkForBranchPruning();
 
-    if ( (receivedUtilities >= 1/*offspringInL.size()*/) && (offspring > 0) ){
+    if ( (receivedUtilities >= offspringInL.size()) && (offspring > 0) ){
         if (this->getFather() != nullptr)
             this->getFather()->receiveOpponentsUtility( max, this );
     }
-    
-    
     /*else if (offspring == 0){
         errorMsgs += "ERROR. receiveOpponentsUtility invoked from a Node with no offspring. id = " + id;
     } else if (receivedUtilities > offspring){
@@ -455,7 +455,12 @@ void Node::addSon(Node* son){
 }
 
 void Node::dropSon(Node* son){
-    offspringInL.remove(son);
+    if (!offspringInL.empty()){
+        if ( !(std::find(offspringInL.begin(), offspringInL.end(), son) != offspringInL.end()) ) {
+            offspringInL.remove(son);
+        }
+    }
+    
 }
 
 Node* Node::getFrontSon(){
@@ -472,6 +477,9 @@ bool Node::getMustBePruned(){
 
 //Prunes all descendence in L, not just sons.
 void Node::setMustBePruned(){
+    if ( this->getInHistory() ){
+        return;
+    }
     mustBePruned = true;
     if (offspringInL.size() == 0){
         return;
@@ -484,9 +492,15 @@ void Node::setMustBePruned(){
             offspringInL.clear();
         }        
     }
+    if (this->getFather() != nullptr ){
+        this->getFather()->dropSon(this);
+    }
 }
 
 void Node::checkForBranchPruning(){
+    if ( this->getInHistory() ){
+        return;
+    }
     if (this->getFather() != nullptr){
         if (this->getFather()->getFather() != nullptr){
             if ( (receivedUtilities >= offspringInL.size()) && this->getFather()->getFather()->getBeenInformed() 
@@ -498,6 +512,9 @@ void Node::checkForBranchPruning(){
 }
 
 void Node::checkForLeafPruning(){
+    if ( this->getInHistory() ){
+        return;
+    }
     if (this->getFather() != nullptr) {
         if (this->getFather()->getFather() != nullptr){
             if ( this->getFather()->getFather()->getBeenInformed() 
@@ -571,5 +588,13 @@ int Node::h(){
 }
 
 
+bool Node::getInHistory(){
+    return inHistory;
+}
 
+void Node::setInHistory(){
+    inHistory = true;
+}
+
+        
 
