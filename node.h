@@ -12,6 +12,7 @@ email: diego.ledesma@correounivalle.edu.co
 #include <iterator>
 #include <list>
 #include <algorithm>
+#include<cmath>
 
 //#include "alert.h"
 
@@ -84,6 +85,7 @@ class Node {
         bool beenInformed;
         bool mustBePruned;
         bool inHistory;
+        static Node* lastPlay;
 
 
         //methods
@@ -142,6 +144,8 @@ class Node {
         int getColInc(direction dir);
         void setInHistory();
         bool getInHistory();
+        Node* getLastPlay();
+        void setLastPlay(Node* lastP);
 };
 
 #else

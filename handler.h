@@ -15,7 +15,7 @@ email: diego.ledesma@correounivalle.edu.co
 
 
 enum difficulty{
-    novice = 2, amateur = 4, expert = 6
+    novice = 2, amateur = 4, expert = 8
 };
 
 class Handler{

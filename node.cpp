@@ -9,6 +9,7 @@ int Node::rowIncrement;
 int Node::colIncrement;
 std::string Node::errorMsgs = "";
 int Node::biggestId = -1;
+Node* Node::lastPlay = nullptr;
 
 Node::Node(){
     id = biggestId + 1;
@@ -423,7 +424,7 @@ float Node::getFlatUtility(){
 
 void Node::receiveOpponentsUtility(float opUt, Node* son){
     beenInformed = true;
-    float ut = -opUt;
+    float ut = -opUt * pow(0.95, ( lastPlay->getDepth() - depth ) );
     if (receivedUtilities == 0){
         max = ut;
         favoriteSon = son;
@@ -537,7 +538,7 @@ float Node::h(){ // pensada para nodos en los cuales playerInTurn == whitesTurn
         }
     }
 
-    float h = wPoints - bPoints + ((myMaxItem)/10) + (possibleMoves/16);
+    float h = wPoints - bPoints /*+ ((myMaxItem)/10) + (possibleMoves/16)*/;
     return h;    
 }
 
@@ -652,4 +653,10 @@ void Node::setInHistory(){
 }
 
         
+Node* Node::getLastPlay(){
+    return lastPlay;
+}
 
+void Node::setLastPlay(Node* lastP){
+    lastPlay = lastP;
+}

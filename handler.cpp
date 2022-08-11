@@ -54,7 +54,7 @@ void Handler::expandNode1(Node* expandingNode){
         }
     } else {
         expandingNode->checkForLeafPruning();
-        expandingNode->getFather()->receiveOpponentsUtility( expandingNode->getFlatUtility(), expandingNode );
+        expandingNode->getFather()->receiveOpponentsUtility( (expandingNode->getFlatUtility()), expandingNode );
         
     }
     //expandingNode->getFather()->dropSon(expandingNode);
@@ -137,6 +137,7 @@ direction Handler::minimax(){ //This method applies minimax and introduces the b
     nodeRegistry.push_back( history.back()->partialExpansion(chosenDir) );
     history.push_back( &nodeRegistry.back() );
     history.back()->setInHistory();
+    history.back()->setLastPlay(& nodeRegistry.back());
     if ( history.back()->getRemainingFood() == 0 )
             gameInProgress = false;
     return chosenDir;
@@ -152,6 +153,7 @@ void Handler::blackPlay(direction dir){
         nodeRegistry.push_back( history.back()->partialExpansion(dir) );
         history.push_back( & nodeRegistry.back() );
         history.back()->setInHistory();
+        history.back()->setLastPlay(& nodeRegistry.back());
         if ( history.back()->getRemainingFood() == 0 ){
             gameInProgress = false;
         }
@@ -178,6 +180,7 @@ void Handler::newGameConsole(difficulty mod){
     nodeRegistry.push_back( *nod0 );
     history.push_back(&nodeRegistry.back());
     history.back()->setInHistory();
+    history.back()->setLastPlay(& nodeRegistry.back());
     std::cout << "Starting position: " << std::endl;
     printCurrentPosition();
 
@@ -225,6 +228,7 @@ void Handler::newGameGUI(difficulty mod){
     nodeRegistry.push_back( *nod0 );
     history.push_back(&nodeRegistry.back());
     history.back()->setInHistory();
+    history.back()->setLastPlay(& nodeRegistry.back());
     std::cout << "Starting position: " << std::endl;
     printCurrentPosition();
 
