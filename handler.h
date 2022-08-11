@@ -62,10 +62,6 @@ class Handler{
         bool isPossible(int destiny[2]);
 
         void showAlerts();
-
-        
-
-
 };
 
 #else

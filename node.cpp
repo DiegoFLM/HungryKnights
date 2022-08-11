@@ -33,7 +33,7 @@ Node::Node(){
     testInitialSet();
 }
 
-Node::Node(Node* dad, int newBoard[N][N], int whitePoints, int blackPoints, direction dir){
+Node::Node(Node* dad, int newBoard[N][N], float whitePoints, float blackPoints, direction dir){
     id = biggestId + 1;
     biggestId = id;
     father = dad;
@@ -262,15 +262,15 @@ int Node::getBCol(){
     return bKnightPos[1];
 }
 
-int Node::getWPoints(){
+float Node::getWPoints(){
     return wPoints;
 }
 
-int Node::getBPoints(){
+float Node::getBPoints(){
     return bPoints;
 }
 
-int Node::getSquareVal(int row, int col){
+float Node::getSquareVal(int row, int col){
     return board[row][col];
 }
 
@@ -365,8 +365,8 @@ bool Node::isPossible(direction dir){
 
 Node Node::partialExpansion(direction dir){
     int origin[2];
-    int sonsWhitePoints = wPoints;
-    int sonsBlackPoints = bPoints;
+    float sonsWhitePoints = wPoints;
+    float sonsBlackPoints = bPoints;
 
     if (! this->isPossible(dir)){
         errorMsgs += "ERROR: IMPOSSIBLE DIRECION IN: partialExpansion(" + std::to_string(dir)
@@ -410,8 +410,8 @@ void Node::resetErrorMsgs(){
     errorMsgs = "";
 }
 
-int Node::getFlatUtility(){
-    int utility;
+float Node::getFlatUtility(){
+    float utility;
     if (playerInTurn == whitesTurn){
         utility = wPoints - bPoints;
     }else {
@@ -421,7 +421,7 @@ int Node::getFlatUtility(){
 }
 
 
-void Node::receiveOpponentsUtility(int opUt, Node* son){
+void Node::receiveOpponentsUtility(float opUt, Node* son){
     beenInformed = true;
     int ut = -opUt;
     if (receivedUtilities == 0){
@@ -446,7 +446,7 @@ void Node::receiveOpponentsUtility(int opUt, Node* son){
     }*/
 }
 
-int Node::getMax(){
+float Node::getMax(){
     return max;
 }
 
@@ -526,7 +526,7 @@ void Node::checkForLeafPruning(){
 }
 
 
-int Node::h(){
+float Node::h(){
     int rowIncrement;
     int colIncrement;
     items maxItem = grass;
@@ -583,7 +583,7 @@ int Node::h(){
         }
 
     }
-    int h = wPoints - bPoints + ((maxItem)/5);
+    float h = wPoints - bPoints + ((maxItem)/5);
     return h;    
 }
 

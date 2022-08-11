@@ -66,8 +66,8 @@ class Node {
         int bKnightPos[2];
         int board[N][N];
         turn playerInTurn;
-        int wPoints;
-        int bPoints;
+        float wPoints;
+        float bPoints;
         int remainingFood;
         
 
@@ -77,7 +77,7 @@ class Node {
         //minMax
         int offspring; //How many nodes have this one as father.
         int receivedUtilities; //How many child nodes have reported their utility.
-        int max;
+        float max;
         Node* favoriteSon;
         //pruning
         std::list <Node *> offspringInL;
@@ -92,7 +92,7 @@ class Node {
         
     public:
         Node();
-        Node(Node* father, int newBoard[N][N], int whitePoints, int blackPoints,  direction dir);
+        Node(Node* father, int newBoard[N][N], float whitePoints, float blackPoints,  direction dir);
 
         void sendAlert(std::string al);
         void showAlerts();
@@ -114,9 +114,9 @@ class Node {
         int getWCol();
         int getBRow();
         int getBCol();
-        int getWPoints();
-        int getBPoints();
-        int getSquareVal(int row, int col);
+        float getWPoints();
+        float getBPoints();
+        float getSquareVal(int row, int col);
         
         bool isPossible(direction dir);
         Node partialExpansion(direction dir);
@@ -124,10 +124,9 @@ class Node {
         void resetErrorMsgs();
         
         //minMax
-        int getFlatUtility();
-        int estimatedUtility();
-        void receiveOpponentsUtility(int ut, Node* son);
-        int getMax();
+        float getFlatUtility();
+        void receiveOpponentsUtility(float ut, Node* son);
+        float getMax();
 
         //pruning
         void addSon(Node* son);
@@ -138,7 +137,7 @@ class Node {
         void setMustBePruned(); //Prunes all descendence in L, not just sons.
         void checkForBranchPruning();
         void checkForLeafPruning();
-        int h();
+        float h();
         void setInHistory();
         bool getInHistory();
 };
