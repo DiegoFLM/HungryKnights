@@ -138,6 +138,8 @@ class Node {
         void checkForBranchPruning();
         void checkForLeafPruning();
         float h();
+        int getRowInc(direction dir);
+        int getColInc(direction dir);
         void setInHistory();
         bool getInHistory();
 };

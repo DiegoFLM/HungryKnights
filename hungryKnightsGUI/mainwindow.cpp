@@ -152,8 +152,8 @@ void MainWindow::refresh(){
         std::cout << "BLACKS TURN" << std::endl;
     }
 
-    ui->lcdNumber->display( lastPlay->getWPoints() );
-    ui->lcdNumber_2->display( lastPlay->getBPoints() );
+    ui->lcdNumber->display( (int)lastPlay->getWPoints() );
+    ui->lcdNumber_2->display( (int)lastPlay->getBPoints() );
 
     for (int r = 0; r < 8; r++){
         for (int c = 0; c < 8; c++){

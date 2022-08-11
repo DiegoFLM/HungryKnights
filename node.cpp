@@ -423,7 +423,7 @@ float Node::getFlatUtility(){
 
 void Node::receiveOpponentsUtility(float opUt, Node* son){
     beenInformed = true;
-    int ut = -opUt;
+    float ut = -opUt;
     if (receivedUtilities == 0){
         max = ut;
         favoriteSon = son;
@@ -439,11 +439,6 @@ void Node::receiveOpponentsUtility(float opUt, Node* son){
         if (this->getFather() != nullptr)
             this->getFather()->receiveOpponentsUtility( max, this );
     }
-    /*else if (offspring == 0){
-        errorMsgs += "ERROR. receiveOpponentsUtility invoked from a Node with no offspring. id = " + id;
-    } else if (receivedUtilities > offspring){
-        std::cout << "last receiveOpponentsUtility for id = " << id << std::endl;
-    }*/
 }
 
 float Node::getMax(){
@@ -460,7 +455,6 @@ void Node::dropSon(Node* son){
             offspringInL.remove(son);
         }
     }
-    
 }
 
 Node* Node::getFrontSon(){
@@ -526,67 +520,128 @@ void Node::checkForLeafPruning(){
 }
 
 
-float Node::h(){
+float Node::h(){ // pensada para nodos en los cuales playerInTurn == whitesTurn
     int rowIncrement;
     int colIncrement;
-    items maxItem = grass;
+    items myMaxItem = freeSquare;
+    int possibleMoves = 0;
 
     for (direction dir = NNE; dir < 8; dir = (direction)(dir + 1)){
-        switch (dir){
-            case NNE:
-                rowIncrement = -2;
-                colIncrement = 1;
-                break;
-
-            case NEE:
-                rowIncrement = -1;
-                colIncrement = 2;
-                break;
-
-            case SEE:
-                rowIncrement = 1;
-                colIncrement = 2;
-                break;
-
-            case SSE:
-                rowIncrement = 2;
-                colIncrement = 1;
-                break;
-
-            case SSW:
-                rowIncrement = 2;
-                colIncrement = -1;
-                break;
-
-            case SWW:
-                rowIncrement = 1;
-                colIncrement = -2;
-                break;
-
-            case NWW:
-                rowIncrement = -1;
-                colIncrement = -2;
-                break;
-
-            case NNW:
-                rowIncrement = -2;
-                colIncrement = -1;
-                break;
-            
-            default:
-                return 0;
-        }
+        rowIncrement = getRowInc(dir);
+        colIncrement = getColInc(dir);
         if (isPossible(dir)){
-            if (board[ wKnightPos[0]+rowIncrement ][wKnightPos[1] + colIncrement] > maxItem){
-                maxItem = (items)board[ wKnightPos[0]+rowIncrement ][wKnightPos[1] + colIncrement];
+            possibleMoves++;
+            if (board[ wKnightPos[0]+rowIncrement ][wKnightPos[1] + colIncrement] > myMaxItem){
+                myMaxItem = (items)board[ wKnightPos[0]+rowIncrement ][wKnightPos[1] + colIncrement];
             }
         }
-
     }
-    float h = wPoints - bPoints + ((maxItem)/5);
+
+    float h = wPoints - bPoints + ((myMaxItem)/10) + (possibleMoves/16);
     return h;    
 }
 
+int Node::getRowInc(direction dir){
+    int rowIncrement;
+    int colIncrement;
+
+    switch (dir){
+        case NNE:
+            rowIncrement = -2;
+            colIncrement = 1;
+            break;
+
+        case NEE:
+            rowIncrement = -1;
+            colIncrement = 2;
+            break;
+
+        case SEE:
+            rowIncrement = 1;
+            colIncrement = 2;
+            break;
+
+        case SSE:
+            rowIncrement = 2;
+            colIncrement = 1;
+            break;
+
+        case SSW:
+            rowIncrement = 2;
+            colIncrement = -1;
+            break;
+
+        case SWW:
+            rowIncrement = 1;
+            colIncrement = -2;
+            break;
+
+        case NWW:
+            rowIncrement = -1;
+            colIncrement = -2;
+            break;
+
+        case NNW:
+            rowIncrement = -2;
+            colIncrement = -1;
+            break;
+        
+        default:
+            return 0;
+    }
+    return rowIncrement;
+}
+
+int Node::getColInc(direction dir){
+    int rowIncrement;
+    int colIncrement;
+
+    switch (dir){
+        case NNE:
+            rowIncrement = -2;
+            colIncrement = 1;
+            break;
+
+        case NEE:
+            rowIncrement = -1;
+            colIncrement = 2;
+            break;
+
+        case SEE:
+            rowIncrement = 1;
+            colIncrement = 2;
+            break;
+
+        case SSE:
+            rowIncrement = 2;
+            colIncrement = 1;
+            break;
+
+        case SSW:
+            rowIncrement = 2;
+            colIncrement = -1;
+            break;
+
+        case SWW:
+            rowIncrement = 1;
+            colIncrement = -2;
+            break;
+
+        case NWW:
+            rowIncrement = -1;
+            colIncrement = -2;
+            break;
+
+        case NNW:
+            rowIncrement = -2;
+            colIncrement = -1;
+            break;
+        
+        default:
+            return 0;
+    }
+    return colIncrement;
+}
 
 bool Node::getInHistory(){
     return inHistory;
